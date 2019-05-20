@@ -5,7 +5,7 @@
   "description": "The fullstack application boilerplate for Adonisjs",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "nodemon server.js",
     "test": "node ace test"
   },
   "keywords": [
@@ -29,6 +29,7 @@
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/vow": "^1.0.17",
+    "adonis-acl": "^1.1.1",
     "adonis-bugsnag": "^1.0.1",
     "bugsnag": "^2.4.3",
     "pg": "^7.7.1"

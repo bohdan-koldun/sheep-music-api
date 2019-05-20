@@ -17,6 +17,11 @@ class ProfileController {
     return auth.user;
   }
 
+
+ async test() {
+   return 'work for admin';
+ }
+
   /**
    * Update profile details.
    * PUT profile

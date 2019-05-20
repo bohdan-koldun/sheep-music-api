@@ -35,3 +35,10 @@ Route.group(() => {
   Route.put('profile', 'ProfileController.update').validator('V1/Profile');
 
 }).middleware(['auth']).prefix('v1').namespace('V1');
+
+
+Route.group(() => {
+  Route.get('test', 'ProfileController.test');
+
+}).middleware(['auth:jwt', 'is: moderator']).prefix('v1').namespace('V1');
+
