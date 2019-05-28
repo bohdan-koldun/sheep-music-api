@@ -30,6 +30,12 @@ class User extends Model {
     ]
   }
 
+  async loadAll() {
+    await this.loadMany([
+      'tokens',
+    ]);
+  }
+
   /**
    * A relationship on tokens is required for auth to
    * work. Since features like `refreshTokens` or

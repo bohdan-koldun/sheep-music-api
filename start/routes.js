@@ -22,6 +22,10 @@ Route.group(() => {
   // Auth
   Route.post('register', 'RegisterController.register').validator('V1/Auth/Register');
   Route.post('login', 'LoginController.login').validator('V1/Auth/Login');
+  Route.post('refresh/token', 'LoginController.refreshToken');
+  Route.get('login/facebook', 'LoginController.facebookRedirect');
+  Route.get('facebook/callback', 'LoginController.facebookCallback');
+
   Route.post('password/forgot', 'ForgotPasswordController.send').validator('V1/Auth/ForgotPassword');
   Route.post('password/reset', 'ResetPasswordController.reset').validator('V1/Auth/ResetPassword');
 
@@ -41,4 +45,3 @@ Route.group(() => {
   Route.get('test', 'ProfileController.test');
 
 }).middleware(['auth:jwt', 'is: moderator']).prefix('v1').namespace('V1');
-
