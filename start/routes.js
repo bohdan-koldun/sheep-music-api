@@ -20,28 +20,28 @@ Route.get('/', () => console.log("Health check at " + (new Date()).toISOString()
 Route.group(() => {
 
   // Auth
-  Route.post('register', 'RegisterController.register').validator('V1/Auth/Register');
-  Route.post('login', 'LoginController.login').validator('V1/Auth/Login');
+  Route.post('register', 'RegisterController.register').validator('Auth/Register');
+  Route.post('login', 'LoginController.login').validator('Auth/Login');
   Route.post('refresh/token', 'LoginController.refreshToken');
   Route.get('login/facebook', 'LoginController.facebookRedirect');
   Route.get('facebook/callback', 'LoginController.facebookCallback');
 
-  Route.post('password/forgot', 'ForgotPasswordController.send').validator('V1/Auth/ForgotPassword');
-  Route.post('password/reset', 'ResetPasswordController.reset').validator('V1/Auth/ResetPassword');
+  Route.post('password/forgot', 'ForgotPasswordController.send').validator('Auth/ForgotPassword');
+  Route.post('password/reset', 'ResetPasswordController.reset').validator('Auth/ResetPassword');
 
-}).prefix('v1').namespace('V1/Auth');
+}).namespace('Auth');
 
 
 Route.group(() => {
 
   // Profile
   Route.get('profile', 'ProfileController.show');
-  Route.put('profile', 'ProfileController.update').validator('V1/Profile');
+  Route.put('profile', 'ProfileController.update').validator('Profile');
 
-}).middleware(['auth']).prefix('v1').namespace('V1');
+}).middleware(['auth']);
 
 
 Route.group(() => {
   Route.get('test', 'ProfileController.test');
 
-}).middleware(['auth:jwt', 'is: moderator']).prefix('v1').namespace('V1');
+}).middleware(['auth:jwt', 'is: moderator']);

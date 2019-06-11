@@ -15,7 +15,7 @@ test('User can login', async ({assert, client}) => {
   });
 
   const response = await client
-    .post('v1/login')
+    .post('/login')
     .send({
       email: "alexmurphy@example.com",
       password: "secret",

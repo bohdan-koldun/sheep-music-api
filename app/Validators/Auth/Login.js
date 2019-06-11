@@ -1,4 +1,4 @@
-const BaseValidator = use('App/Validators/V1/BaseValidator');
+const BaseValidator = use('App/Validators/BaseValidator');
 
 class Login extends BaseValidator {
   get rules() {

@@ -16,7 +16,7 @@ test('User can view profile', async ({assert, client}) => {
   });
 
   const response = await client
-    .get('v1/profile')
+    .get('profile')
     .loginVia(user)
     .end();
 
@@ -38,7 +38,7 @@ test('User can update profile', async ({assert, client}) => {
   });
 
   const response = await client
-    .put('v1/profile')
+    .put('profile')
     .send({
       first_name: "Iron",
       last_name: "Stark",

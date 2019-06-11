@@ -29,7 +29,7 @@ module.exports = {
     facebook: {
       clientId: Env.get('FB_CLIENT_ID'),
       clientSecret: Env.get('FB_CLIENT_SECRET'),
-      redirectUri: `${Env.get('APP_URL')}/v1/facebook/callback`
+      redirectUri: `${Env.get('APP_URL')}//facebook/callback`
     },
 
     /*

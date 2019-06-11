@@ -22,7 +22,7 @@ test('User can forgot password', async ({assert, client}) => {
   await User.create(data);
 
   const response = await client
-    .post('v1/password/forgot')
+    .post('/password/forgot')
     .send({
       email: data.email,
     })
@@ -47,7 +47,7 @@ test('User can forgot password', async ({assert, client}) => {
 test('User can reset password', async ({assert, client}) => {
 
   const response = await client
-    .post('v1/password/reset')
+    .post('password/reset')
     .send({
       email: "andymoor@example.com",
       password: "secret",

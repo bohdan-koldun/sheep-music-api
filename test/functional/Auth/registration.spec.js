@@ -7,7 +7,7 @@ trait('Test/ApiClient');
 test('User can register', async ({assert, client}) => {
 
   const response = await client
-    .post('v1/register')
+    .post('register')
     .send({
       first_name: "John",
       last_name: "Doe",
