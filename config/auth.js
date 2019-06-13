@@ -71,7 +71,11 @@ module.exports = {
     scheme: 'jwt',
     uid: 'email',
     password: 'password',
+<<<<<<< HEAD
     expiresIn: 3600,
+=======
+    expiresIn:'15d',// expiresIn: 3600,
+>>>>>>> master
     options: {
       secret: Env.get('APP_KEY')
     }
