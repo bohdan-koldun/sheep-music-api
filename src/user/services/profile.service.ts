@@ -2,7 +2,7 @@ import { Injectable, Inject, HttpException, HttpStatus, Logger } from '@nestjs/c
 import { Connection, Repository } from 'typeorm';
 import { User, Confirmation } from '../entities';
 import { UserDTO } from '../dto';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from 'nestjs-config';
 import { MailerService } from '@nest-modules/mailer';
 
 @Injectable()
@@ -51,7 +51,7 @@ export class ProfileService {
 
     private async sendConfirmNewEmail(user: User, confirm: Confirmation): Promise<void> {
         const confirmationLink =
-            `${this.configService.get('APP_URL')}` +
+            `${this.configService.get('app.url')}` +
             `/registration/confirm?email=` +
             `${confirm.newEmail}&code=${confirm.emailCode}`;
 

@@ -3,7 +3,7 @@ import { MailerService } from '@nest-modules/mailer';
 import { Connection, Repository } from 'typeorm';
 import { User, Confirmation, Role, RoleUser } from '../entities';
 import { UserDTO, ConfirmDTO } from '../dto';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from 'nestjs-config';
 
 @Injectable()
 export class RegisterService {
@@ -91,7 +91,7 @@ export class RegisterService {
 
     private async  sendConfirmEmail(user: User, code): Promise<void> {
         const confirmationLink =
-            `${this.configService.get('APP_URL')}` +
+            `${this.configService.get('app.url')}` +
             `/registration/confirm?email=` +
             `${user.email}&code=${code}`;
 

@@ -3,7 +3,7 @@ import { MailerService } from '@nest-modules/mailer';
 import { Connection, Repository } from 'typeorm';
 import { User, Confirmation } from '../entities';
 import { ConfirmDTO, EmailDTO } from '../dto';
-import { ConfigService } from '../../config/config.service';
+import { ConfigService } from 'nestjs-config';
 
 @Injectable()
 export class ForgotPasswordService {
@@ -62,7 +62,7 @@ export class ForgotPasswordService {
 
     private async  sendPasswordRestoreEmail(user: User, code): Promise<void> {
         const confirmationLink =
-            `${this.configService.get('APP_URL')}` +
+            `${this.configService.get('app.url')}` +
             `/password/reset?email=` +
             `${user.email}&code=${code}`;
 

@@ -12,6 +12,7 @@ const commonConfig = {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
+    sslmode: process.env.DB_SSL,
     entities: [
         'src/**/*.entity{.ts,.js}',
     ],
