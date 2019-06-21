@@ -1,9 +1,9 @@
-version: '3'
+version: '3.6'
 services:
   sheep-api:
-    build: ./
-    env_file:
-      - prod.env
+    build: .
+    ports:
+    - 80:3333
     environment:
      - PORT=3333
      - NODE_ENV=dev
@@ -14,6 +14,7 @@ services:
      - DB_USER=doadmin
      - DB_PASSWORD=bth80vkjq61nrab6
      - DB_DATABASE=defaultdb
+     - DB_SSL=require
      - MAIL_CONNECTION=smtp
      - MAIL_USERNAME=2fd62e3d1a5f12
      - MAIL_PASSWORD=2f1bd833ac6849
