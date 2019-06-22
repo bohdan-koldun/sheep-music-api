@@ -12,7 +12,6 @@ export const databaseProviders = [
                 username: configService.get('database.user'),
                 password: configService.get('database.password'),
                 database: configService.get('database.database'),
-                ssl: configService.get('database.sslmode'),
                 entities: [
                     __dirname + '/../**/*.entity{.ts,.js}',
                 ],

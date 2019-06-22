@@ -24,7 +24,6 @@ RUN cp .env.example .env \
  && sed -i "s,^DB_USER=,DB_USER=$DB_USER," .env \
  && sed -i "s,^DB_PASSWORD=,DB_PASSWORD=$DB_PASSWORD," .env \
  && sed -i "s,^DB_DATABASE=,DB_DATABASE=$DB_DATABASE," .env \
- && sed -i "s,^DB_SSL=,DB_SSL=$DB_SSL," .env \
  && sed -i "s,^MAIL_CONNECTION=,MAIL_CONNECTION=$MAIL_CONNECTION," .env \
  && sed -i "s,^MAIL_USERNAME=,MAIL_USERNAME=$MAIL_USERNAME," .env \
  && sed -i "s,^MAIL_PASSWORD=,MAIL_PASSWORD=$MAIL_PASSWORD," .env \
