@@ -11,6 +11,9 @@ import {
     providers: [
         ...songProviders,
     ],
+    exports: [
+        ...songProviders,
+    ],
 })
 
 export class SongModule { }

@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
+import { Album } from './album.entity';
 
 @Entity('authors')
 export class Author {
@@ -22,4 +23,7 @@ export class Author {
 
     @OneToMany(type => Song, song => song.author)
     songs: Song[];
+
+    @OneToMany(type => Album, album => album.author)
+    albums: Album[];
 }

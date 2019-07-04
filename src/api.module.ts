@@ -6,7 +6,11 @@ import { HttpErrorFilter } from './common/filters/http-error.filter';
 import { SocketModule } from './socket/socket.module';
 
 @Module({
-    imports: [ UserModule, SongModule, SocketModule ],
+    imports: [
+        UserModule,
+        SongModule,
+        SocketModule,
+     ],
     providers: [
         {
             provide: APP_FILTER,

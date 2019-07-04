@@ -25,6 +25,9 @@ export class Song {
     @Column({ type: 'varchar', length: 500, nullable: true })
     parsedSource: string;
 
+    @Column({ type: 'varchar', length: 500, nullable: true })
+    video: string;
+
     @ManyToOne(type => Attachment, { cascade: true, onDelete: 'CASCADE', eager: true })
     @JoinColumn()
     audioMp3: Attachment;

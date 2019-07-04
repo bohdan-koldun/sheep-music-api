@@ -5,10 +5,14 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, Inject } from '@nestjs/common';
+import { SongParserService } from '../song/services';
 
 @WebSocketGateway(3334)
 export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {
+    @Inject()
+    private readonly songService: SongParserService;
+    private readonly songList: any[] = [];
 
     @WebSocketServer() server;
     users: number = 0;
@@ -27,8 +31,18 @@ export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('new parsed song')
     async onNewSong(client, message) {
-        // console.log(message)
+        this.songList.push(message);
         return 'received';
     }
 
+    @SubscribeMessage('last parsed song')
+    async onLastNewSong(client, message) {
+        Logger.log(`Finish of parsing. Total song: ${this.songList.length}`);
+
+        for (const song of this.songList) {
+            await this.songService.saveParsedSong(song);
+        }
+
+        return 'received';
+    }
 }
