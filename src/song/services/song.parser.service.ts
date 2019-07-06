@@ -40,9 +40,13 @@ export class SongParserService {
 
         } = data;
 
-        let { author } = album;
-        author = await this.saveParsedAuthor(author);
-        const savedAlbum = await this.saveParsedAlbum(album, author);
+        if (!title) { return; }
+        let author = null; let savedAlbum = null;
+        if (album) {
+            author = album.author;
+            author = await this.saveParsedAuthor(author);
+            savedAlbum = await this.saveParsedAlbum(album, author);
+        }
 
         let song = await this.conection
             .getRepository(Song)
@@ -66,7 +70,6 @@ export class SongParserService {
         if (translations && translations.length) {
             this.translations.set(url, translations);
         }
-
         return song;
     }
 
@@ -136,11 +139,9 @@ export class SongParserService {
             description,
             thumbnailImg,
         } = data;
-
         let author = await this.conection
             .getRepository(Author)
             .findOne({ parsedSource: url });
-
         if (name && !author) {
             author = await this.conection
                 .getRepository(Author)
@@ -151,7 +152,6 @@ export class SongParserService {
                     thumbnail: await this.saveAttachment(thumbnailImg),
                 });
         }
-
         return author;
     }
 
