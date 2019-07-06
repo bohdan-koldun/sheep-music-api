@@ -8,7 +8,7 @@ import {
 import { Logger, Inject } from '@nestjs/common';
 import { SongParserService } from '../song/services';
 
-@WebSocketGateway(3334)
+@WebSocketGateway(8443)
 export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @Inject()
     private readonly songService: SongParserService;
