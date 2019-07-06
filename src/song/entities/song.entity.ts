@@ -4,6 +4,7 @@ import { Attachment } from './attachment.entity';
 import { Album } from './album.entity';
 import { Author } from './author.entity';
 import { Tag } from './tag.entity';
+import { Translation } from './translation.entity';
 
 @Entity('songs')
 export class Song {
@@ -32,6 +33,9 @@ export class Song {
     @JoinColumn()
     audioMp3: Attachment;
 
+    @Column({ type: 'varchar', length: 20, nullable: true })
+    language: string;
+
     @ManyToOne(type => Album, album => album.songs, { cascade: false, eager: true })
     album: Album;
 
@@ -41,6 +45,10 @@ export class Song {
     @ManyToMany(type => Tag, tag => tag.songs, { cascade: false, eager: true })
     @JoinTable()
     tags: Tag[];
+
+    @ManyToMany(type => Translation, translation => translation.songs, { cascade: false, eager: true })
+    @JoinTable()
+    translations: Translation[];
 
     toResponseObject(): SongDTO {
         const {
