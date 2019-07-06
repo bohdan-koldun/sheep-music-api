@@ -1,22 +1,28 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Connection } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Song } from '../entities/song.entity';
 import { SongDTO } from '../dto';
 import { Album } from '../entities/album.entity';
 import { Author } from '../entities/author.entity';
 import { Attachment } from '../entities/attachment.entity';
 import { Tag } from '../entities/tag.entity';
+import { Translation } from '../entities/translation.entity';
 
 @Injectable()
 export class SongParserService {
-    @Inject('DATABASE_CONNECTION')
-    private readonly conection: Connection;
+
+    private readonly songRepo: Repository<Song>;
+    private translations = new Map();
+
+    constructor(
+        @Inject('DATABASE_CONNECTION')
+        private readonly conection: Connection,
+    ) {
+        this.songRepo = this.conection.getRepository(Song);
+    }
 
     async getSongList(): Promise<SongDTO[]> {
-        const users = await this.conection
-            .getRepository(Song)
-            .find();
-
+        const users = await this.songRepo.find();
         return users.map(user => user.toResponseObject()) as unknown as SongDTO[];
     }
 
@@ -43,8 +49,7 @@ export class SongParserService {
             .findOne({ parsedSource: url });
 
         if (title && !song) {
-            song = await this.conection
-                .getRepository(Song)
+            song = await this.songRepo
                 .save({
                     title,
                     chords: songText,
@@ -58,7 +63,35 @@ export class SongParserService {
                 });
         }
 
+        if (translations && translations.length) {
+            this.translations.set(url, translations);
+        }
+
         return song;
+    }
+
+    async saveTranslations() {
+        for (const [key, value] of this.translations) {
+            const song = await this.songRepo
+                .findOne({ parsedSource: key });
+            const translations = [];
+            for (const item of value) {
+                const translationSong = await this.songRepo
+                    .findOne({ parsedSource: item && item.href });
+                if (translationSong && item.translatin) {
+                    translations.push({
+                        song: translationSong,
+                        language: item.translatin,
+                    });
+                }
+            }
+
+            song.translations = await this.conection
+                .getRepository(Translation)
+                .save(translations);
+
+            await this.songRepo.save(song);
+        }
     }
 
     async saveParsedAlbum(data: any, author?: Author) {

@@ -38,11 +38,16 @@ export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @SubscribeMessage('last parsed song')
     async onLastNewSong(client, message) {
         Logger.log(`Finish of parsing. Total song: ${this.songList.length}`);
+        await this.saveSongList();
+        return 'received';
+    }
 
+    async saveSongList() {
         for (const song of this.songList) {
+
             await this.songService.saveParsedSong(song);
         }
 
-        return 'received';
+        await this.songService.saveTranslations();
     }
 }

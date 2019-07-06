@@ -42,11 +42,11 @@ export class Song {
     @ManyToOne(type => Author, author => author.songs, { cascade: false, eager: true })
     author: Author;
 
-    @ManyToMany(type => Tag, tag => tag.songs, { cascade: false, eager: true })
+    @ManyToMany(type => Tag, tag => tag.songs, { cascade: false })
     @JoinTable()
     tags: Tag[];
 
-    @ManyToMany(type => Translation, translation => translation.songs, { cascade: false, eager: true })
+    @ManyToMany(type => Translation, translation => translation.songs, { cascade: false })
     @JoinTable()
     translations: Translation[];
 
