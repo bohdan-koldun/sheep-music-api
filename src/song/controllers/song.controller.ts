@@ -1,6 +1,7 @@
-import { Controller, Res, HttpStatus, Inject, Get } from '@nestjs/common';
-import { Response } from 'express';
+import { Controller, Inject, Get, Request } from '@nestjs/common';
 import { SongService } from '../services';
+import { Pagination } from '../../pagination';
+import { SongDTO } from '../dto';
 
 @Controller('songs')
 export class SongController {
@@ -8,11 +9,11 @@ export class SongController {
     private readonly songService: SongService;
 
     @Get()
-    async index(@Res() res: Response) {
-        const songs = await this.songService.getSongList();
-        res.status(HttpStatus.OK).json({
-            total: songs.length,
-            data: songs,
+    async index(@Request() request): Promise<Pagination<SongDTO>> {
+        return await this.songService.paginate({
+            limit: request.query.hasOwnProperty('limit') ? request.query.limit : 20,
+            page: request.query.hasOwnProperty('page') ? request.query.page : 0,
+            keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
         });
     }
 }

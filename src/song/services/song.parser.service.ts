@@ -1,7 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { Song } from '../entities/song.entity';
-import { SongDTO } from '../dto';
 import { Album } from '../entities/album.entity';
 import { Author } from '../entities/author.entity';
 import { Attachment } from '../entities/attachment.entity';
@@ -19,11 +18,6 @@ export class SongParserService {
         private readonly conection: Connection,
     ) {
         this.songRepo = this.conection.getRepository(Song);
-    }
-
-    async getSongList(): Promise<SongDTO[]> {
-        const users = await this.songRepo.find();
-        return users.map(user => user.toResponseObject()) as unknown as SongDTO[];
     }
 
     async saveParsedSong(data: any) {
