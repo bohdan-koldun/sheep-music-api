@@ -8,6 +8,9 @@ export class Author {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ type: 'varchar', length: 100, unique: true  })
+    slug: string;
+
     @Column({ type: 'varchar', length: 255 })
     title: string;
 
