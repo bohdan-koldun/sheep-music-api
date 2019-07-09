@@ -23,7 +23,8 @@
     "migration:generate": "yarn ormconfig:init && yarn typeorm migration:generate -n",
     "migration:create": "yarn ormconfig:init && yarn typeorm migration:create -n",
     "migration:run": "yarn ormconfig:init && yarn typeorm migration:run",
-    "migration:revert": "yarn ormconfig:init && yarn typeorm migration:revert",
+    "schema:drop": "yarn ormconfig:init && yarn typeorm schema:drop",
+    "migration:revert": "yarn ormconfig:init && yarn typeorm migration:revert", 
     "seed:create": "yarn ormconfig:init &&  yarn typeorm migration:create -c seed -n ",
     "seed:run": "yarn ormconfig:init && yarn typeorm migration:run -c seed",
     "seed:revert": "yarn ormconfig:init && yarn typeorm migration:revert -c seed"
