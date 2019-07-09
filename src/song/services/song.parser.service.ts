@@ -1,5 +1,6 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
+import { slugify } from 'transliteration';
 import { Song } from '../entities/song.entity';
 import { Album } from '../entities/album.entity';
 import { Author } from '../entities/author.entity';
@@ -21,6 +22,7 @@ export class SongParserService {
     }
 
     async saveParsedSong(data: any) {
+        if (!data) { return; }
         const {
             title,
             songText,
@@ -34,7 +36,6 @@ export class SongParserService {
 
         } = data;
 
-        if (!title) { return; }
         let author = null; let savedAlbum = null;
         if (album) {
             author = album.author;
@@ -50,6 +51,7 @@ export class SongParserService {
             song = await this.songRepo
                 .save({
                     title,
+                    slug: await this.createSlug(title, Song),
                     chords: songText,
                     chordsKey,
                     parsedSource: url,
@@ -69,25 +71,29 @@ export class SongParserService {
 
     async saveTranslations() {
         for (const [key, value] of this.translations) {
-            const song = await this.songRepo
-                .findOne({ parsedSource: key });
-            const translations = [];
-            for (const item of value) {
-                const translationSong = await this.songRepo
-                    .findOne({ parsedSource: item && item.href });
-                if (translationSong && item.translatin) {
-                    translations.push({
-                        song: translationSong,
-                        language: item.translatin,
-                    });
+            try {
+                const song = await this.songRepo
+                    .findOne({ parsedSource: key });
+                const translations = [];
+                for (const item of value) {
+                    const translationSong = await this.songRepo
+                        .findOne({ parsedSource: item && item.href });
+                    if (translationSong && item.translatin) {
+                        translations.push({
+                            song: translationSong,
+                            language: item.translatin,
+                        });
+                    }
                 }
+
+                song.translations = await this.conection
+                    .getRepository(Translation)
+                    .save(translations);
+                await this.songRepo.save(song);
+            } catch (error) {
+                Logger.error(error.message, error);
             }
 
-            song.translations = await this.conection
-                .getRepository(Translation)
-                .save(translations);
-
-            await this.songRepo.save(song);
         }
     }
 
@@ -113,6 +119,7 @@ export class SongParserService {
                 .getRepository(Album)
                 .save({
                     title,
+                    slug: await this.createSlug(title, Album),
                     description,
                     year,
                     iTunes,
@@ -141,6 +148,7 @@ export class SongParserService {
                 .getRepository(Author)
                 .save({
                     title: name,
+                    slug: await this.createSlug(name, Album),
                     description,
                     parsedSource: url,
                     thumbnail: await this.saveAttachment(thumbnailImg),
@@ -179,5 +187,19 @@ export class SongParserService {
                         name: item,
                     });
             }));
+    }
+
+    private async createSlug(title: string, Entity?): Promise<string> {
+        const slug = slugify(title);
+        const entity = await this.conection
+            .getRepository(Entity).
+            findOne({ slug });
+
+        if (!entity) {
+            return slug;
+        } else {
+            return slug + Date.now();
+        }
+
     }
 }

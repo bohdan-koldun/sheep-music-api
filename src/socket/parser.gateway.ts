@@ -44,7 +44,11 @@ export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async saveSongList() {
         for (const song of this.songList) {
-            await this.songService.saveParsedSong(song);
+            try {
+                await this.songService.saveParsedSong(song);
+            } catch (error) {
+                Logger.error(error.message, error);
+            }
         }
 
         await this.songService.saveTranslations();
