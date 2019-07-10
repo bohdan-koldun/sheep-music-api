@@ -15,9 +15,15 @@ export class SongService {
         this.songRepo = this.conection.getRepository(Song);
     }
 
-    async getSongList(): Promise<SongDTO[]> {
-        const users = await this.songRepo.find();
-        return users.map(user => user.toResponseObject()) as unknown as SongDTO[];
+    async getBuSlugOrId(identificator: string): Promise<SongDTO> {
+        const id = parseInt(identificator, 10);
+        const song = await this.songRepo.findOne({
+            where: [
+                { id: id ? id : null },
+                { slug: identificator },
+            ],
+        });
+        return song ? song.toResponseObject() : null;
     }
 
     async paginate(

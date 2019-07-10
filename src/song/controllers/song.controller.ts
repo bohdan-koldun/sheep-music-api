@@ -1,4 +1,4 @@
-import { Controller, Inject, Get, Request } from '@nestjs/common';
+import { Controller, Inject, Get, Request, Param } from '@nestjs/common';
 import { SongService } from '../services';
 import { Pagination } from '../../pagination';
 import { SongDTO } from '../dto';
@@ -16,4 +16,10 @@ export class SongController {
             keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
         });
     }
+
+    @Get(':id')
+    async findOne(@Param('id') id): Promise<SongDTO> {
+        return await this.songService.getBuSlugOrId(id);
+    }
+
 }

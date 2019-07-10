@@ -56,6 +56,7 @@ export class Song {
     toResponseObject(): SongDTO {
         const {
             id,
+            slug,
             title,
             chords,
             chordsKey,
@@ -68,6 +69,7 @@ export class Song {
 
         return {
             id,
+            slug,
             title,
             chords,
             chordsKey,
