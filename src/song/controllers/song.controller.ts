@@ -1,5 +1,5 @@
 import { Controller, Inject, Get, Request, Param } from '@nestjs/common';
-import { SongService } from '../services';
+import { SongService, PrettifyService } from '../services';
 import { Pagination } from '../../pagination';
 import { SongDTO } from '../dto';
 
@@ -7,6 +7,8 @@ import { SongDTO } from '../dto';
 export class SongController {
     @Inject()
     private readonly songService: SongService;
+    @Inject()
+    private readonly prettifyService: PrettifyService;
 
     @Get()
     async index(@Request() request): Promise<Pagination<SongDTO>> {
@@ -20,6 +22,11 @@ export class SongController {
     @Get(':id')
     async findOne(@Param('id') id): Promise<SongDTO> {
         return await this.songService.getBuSlugOrId(id);
+    }
+
+    @Get('prettify/chords')
+    async prettify() {
+        return await this.prettifyService.prettifyChords();
     }
 
 }
