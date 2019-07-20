@@ -38,6 +38,7 @@ export class SongService {
         });
 
         return new Pagination<SongDTO>({
+            curPage: page,
             total,
             results: results.map(user => user.toResponseObject()) as unknown as SongDTO[],
         });

@@ -37,6 +37,7 @@ export class AuthorService {
         });
 
         return new Pagination<AuthorDTO>({
+            curPage: page,
             total,
             results,
         });

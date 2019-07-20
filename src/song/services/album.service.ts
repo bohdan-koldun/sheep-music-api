@@ -37,6 +37,7 @@ export class AlbumService {
         });
 
         return new Pagination<AlbumDTO>({
+            curPage: page,
             total,
             results,
         });

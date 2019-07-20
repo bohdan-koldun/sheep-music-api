@@ -2,13 +2,15 @@
 import { PaginationResultInterface } from './pagination.results.interface';
 
 export class Pagination<PaginationEntity> {
-    public results: PaginationEntity[];
-    public pageTotal: number;
+    public curPage: number;
+    public perPage: number;
     public total: number;
+    public results: PaginationEntity[];
 
     constructor(paginationResults: PaginationResultInterface<PaginationEntity>) {
-        this.results = paginationResults.results;
-        this.pageTotal = paginationResults.results.length;
+        this.curPage = paginationResults.curPage;
+        this.perPage = paginationResults.results.length;
         this.total = paginationResults.total;
+        this.results = paginationResults.results;
     }
 }
