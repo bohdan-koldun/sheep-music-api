@@ -3,6 +3,7 @@ import {
     SongService,
     PrettifyService,
     AlbumService,
+    AuthorService,
 } from './services';
 
 export const songProviders = [
@@ -10,4 +11,5 @@ export const songProviders = [
     SongService,
     PrettifyService,
     AlbumService,
+    AuthorService,
 ];
