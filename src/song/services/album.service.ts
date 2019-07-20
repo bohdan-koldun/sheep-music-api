@@ -38,6 +38,7 @@ export class AlbumService {
 
         return new Pagination<AlbumDTO>({
             curPage: page,
+            countPages: Math.ceil(total / limit),
             total,
             results,
         });

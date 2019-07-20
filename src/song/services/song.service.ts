@@ -40,6 +40,7 @@ export class SongService {
         return new Pagination<SongDTO>({
             curPage: page,
             total,
+            countPages: Math.ceil(total / limit),
             results: results.map(user => user.toResponseObject()) as unknown as SongDTO[],
         });
     }

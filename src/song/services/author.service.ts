@@ -38,6 +38,7 @@ export class AuthorService {
 
         return new Pagination<AuthorDTO>({
             curPage: page,
+            countPages: Math.ceil(total / limit),
             total,
             results,
         });

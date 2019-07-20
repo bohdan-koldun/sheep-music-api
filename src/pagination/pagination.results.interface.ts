@@ -3,4 +3,5 @@ export interface PaginationResultInterface<PaginationEntity> {
     results: PaginationEntity[];
     curPage: number;
     perPage?: number;
+    countPages: number;
 }
