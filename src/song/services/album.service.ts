@@ -1,45 +1,44 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Connection, Repository, Like } from 'typeorm';
-import { Song } from '../entities/song.entity';
-import { SongDTO } from '../dto';
+import { Album } from '../entities/album.entity';
+import { AlbumDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 
 @Injectable()
-export class SongService {
-    private readonly songRepo: Repository<Song>;
+export class AlbumService {
+    private readonly albumRepo: Repository<AlbumDTO>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
         private readonly conection: Connection,
     ) {
-        this.songRepo = this.conection.getRepository(Song);
+        this.albumRepo = this.conection.getRepository(Album);
     }
 
-    async getBySlugOrId(identificator: string): Promise<SongDTO> {
+    async getBySlugOrId(identificator: string): Promise<AlbumDTO> {
         const id = parseInt(identificator, 10);
-        const song = await this.songRepo.findOne({
+        return await this.albumRepo.findOne({
             where: [
                 { id: id ? id : null },
                 { slug: identificator },
             ],
         });
-        return song ? song.toResponseObject() : null;
     }
 
     async paginate(
         options: PaginationOptionsInterface,
-    ): Promise<Pagination<SongDTO>> {
+    ): Promise<Pagination<AlbumDTO>> {
         const { keyword, limit, page } = options;
-        const [results, total] = await this.songRepo.findAndCount({
+        const [results, total] = await this.albumRepo.findAndCount({
             where: { title: Like('%' + keyword + '%') },
             // TODO order: { title: 'DESC' },
             take: limit,
             skip: limit * page ,
         });
 
-        return new Pagination<SongDTO>({
+        return new Pagination<AlbumDTO>({
             total,
-            results: results.map(user => user.toResponseObject()) as unknown as SongDTO[],
+            results,
         });
     }
 }

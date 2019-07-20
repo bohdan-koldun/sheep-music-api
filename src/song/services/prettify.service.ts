@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { Song } from '../entities/song.entity';
 
@@ -20,13 +20,15 @@ export class PrettifyService {
     async prettifyChords() {
         const songs = await this.songRepo.find();
 
-        await this.songRepo.save(
-            songs.map(song => ({
+        for (const song of songs) {
+            await this.songRepo.save({
                 ...song,
                 chords: song && song.chords && song.chords.replace(/<br>/g, '\n'),
                 text: this.clearChords(song.chords),
-            })) as unknown as Song[]);
+            });
+        }
 
+        Logger.log('end prettify');
         return 'prettify chords done';
     }
 
