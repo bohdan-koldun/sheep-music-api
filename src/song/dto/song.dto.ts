@@ -27,6 +27,9 @@ export class SongDTO {
     audioMp3: Attachment;
 
     @IsOptional()
+    video: string;
+
+    @IsOptional()
     parsedSource?: string;
 
     @IsOptional()

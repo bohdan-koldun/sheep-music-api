@@ -22,6 +22,7 @@ export class AlbumService {
                 { id: id ? id : null },
                 { slug: identificator },
             ],
+            relations: ['songs', 'author'],
         });
     }
 

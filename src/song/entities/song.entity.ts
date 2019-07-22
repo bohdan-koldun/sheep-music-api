@@ -65,6 +65,7 @@ export class Song {
             audioMp3,
             author,
             tags,
+            video,
         } = this;
 
         return {
@@ -78,6 +79,7 @@ export class Song {
             audioMp3,
             author,
             tags,
+            video,
         };
     }
 }
