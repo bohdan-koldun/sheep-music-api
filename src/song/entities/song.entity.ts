@@ -26,7 +26,7 @@ export class Song {
     @Column({ type: 'varchar', length: 10, nullable: true })
     chordsKey: string;
 
-    @Column({ type: 'varchar', length: 500, nullable: true })
+    @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
 
     @Column({ type: 'varchar', length: 500, nullable: true })

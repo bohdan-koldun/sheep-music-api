@@ -17,7 +17,7 @@ export class Author {
     @Column({ type: 'varchar', length: 1500, nullable: true })
     description: string;
 
-    @Column({ type: 'varchar', length: 500, nullable: true })
+    @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
 
     @OneToOne(type => Attachment, { cascade: true, onDelete: 'CASCADE', eager: true })

@@ -30,12 +30,17 @@ export class AuthorService {
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AuthorDTO>> {
         const { keyword, limit, page } = options;
-        const [results, total] = await this.authorRepo.findAndCount({
-            where: { title: Like('%' + keyword + '%') },
-            // TODO order: { title: 'DESC' },
-            take: limit,
-            skip: limit * page ,
-        });
+        const [results, total] = await this.authorRepo
+            .createQueryBuilder('author')
+            .leftJoinAndSelect('author.songs', 'songs')
+            .loadRelationCountAndMap('author.songs', 'author.songs')
+            .leftJoinAndSelect('author.albums', 'albums')
+            .loadRelationCountAndMap('author.albums', 'author.albums')
+            .leftJoinAndSelect('author.thumbnail', 'thumbnail')
+            .skip(page * limit)
+            .take(limit)
+            .where('author.title like :title', { title: '%' + keyword + '%' })
+            .getManyAndCount();
 
         return new Pagination<AuthorDTO>({
             curPage: page,

@@ -30,12 +30,17 @@ export class AlbumService {
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AlbumDTO>> {
         const { keyword, limit, page } = options;
-        const [results, total] = await this.albumRepo.findAndCount({
-            where: { title: Like('%' + keyword + '%') },
-            // TODO order: { title: 'DESC' },
-            take: limit,
-            skip: limit * page ,
-        });
+
+        const [results, total] = await this.albumRepo
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.songs', 'songs')
+            .loadRelationCountAndMap('album.songs', 'album.songs')
+            .leftJoinAndSelect('album.thumbnail', 'thumbnail')
+            .skip(page * limit)
+            .take(limit)
+            .where('album.title like :title', { title: '%' + keyword + '%' })
+            .getManyAndCount();
 
         return new Pagination<AlbumDTO>({
             curPage: page,
