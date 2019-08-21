@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, JoinTable, ManyToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { SongDTO } from '../dto';
 import { Attachment } from './attachment.entity';
 import { Album } from './album.entity';
@@ -11,7 +11,7 @@ export class Song {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 100, unique: true  })
+    @Column({ type: 'varchar', length: 100, unique: true })
     slug: string;
 
     @Column({ type: 'varchar', length: 255 })
@@ -31,6 +31,12 @@ export class Song {
 
     @Column({ type: 'varchar', length: 500, nullable: true })
     video: string;
+
+    @CreateDateColumn({ name: 'created_at', nullable: false })
+    createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at', nullable: true })
+    updatedAt: Date;
 
     @ManyToOne(type => Attachment, { cascade: true, onDelete: 'CASCADE', eager: true })
     @JoinColumn()

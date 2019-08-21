@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
 import { Album } from './album.entity';
@@ -19,6 +19,12 @@ export class Author {
 
     @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
+
+    @CreateDateColumn({ name: 'created_at', nullable: false })
+    createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at', nullable: true })
+    updatedAt: Date;
 
     @OneToOne(type => Attachment, { cascade: true, onDelete: 'CASCADE', eager: true })
     @JoinColumn()

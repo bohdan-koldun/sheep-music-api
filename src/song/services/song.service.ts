@@ -29,13 +29,15 @@ export class SongService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
-        const { keyword, limit, page } = options;
-        const [results, total] = await this.songRepo.findAndCount({
-            where: { title: Like('%' + keyword + '%') },
-            // TODO order: { title: 'DESC' },
-            take: limit,
-            skip: limit * page ,
-        });
+        const { keyword, limit, page, filter } = options;
+
+        const [results, total] = await this.songRepo
+            .createQueryBuilder()
+            .where('LOWER(title) LIKE :title', { title: `%${keyword.toLowerCase()}%` })
+            .orderBy({ ...this.generateOrderFilter(filter) })
+            .take(limit)
+            .skip(limit * page)
+            .getManyAndCount();
 
         return new Pagination<SongDTO>({
             curPage: page,
@@ -43,5 +45,18 @@ export class SongService {
             countPages: Math.ceil(total / limit),
             results: results.map(user => user.toResponseObject()) as unknown as SongDTO[],
         });
+    }
+
+    private generateOrderFilter(filter: string): any {
+        const order: any = {};
+        if (filter === 'revert_alphabet') {
+            order.title = 'DESC';
+        }
+
+        if (filter === 'alphabet') {
+            order.title = 'ASC';
+        }
+
+        return order;
     }
 }

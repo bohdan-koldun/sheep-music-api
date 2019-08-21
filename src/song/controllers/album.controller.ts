@@ -14,6 +14,7 @@ export class AlbumController {
             limit: request.query.hasOwnProperty('limit') ? request.query.limit : 20,
             page: request.query.hasOwnProperty('page') ? request.query.page : 0,
             keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
+            filter:  request.query.hasOwnProperty('filter') ? request.query.filter : '',
         });
     }
 
