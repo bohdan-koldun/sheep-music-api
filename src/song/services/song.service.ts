@@ -32,8 +32,11 @@ export class SongService {
         const { keyword, limit, page, filter } = options;
 
         const [results, total] = await this.songRepo
-            .createQueryBuilder()
-            .where('LOWER(title) LIKE :title', { title: `%${keyword.toLowerCase()}%` })
+            .createQueryBuilder('song')
+            .leftJoinAndSelect('song.audioMp3', 'audioMp3')
+            .leftJoinAndSelect('song.author', 'author')
+            .leftJoinAndSelect('song.album', 'album')
+            .where('LOWER(song.title) LIKE :title', { title: `%${keyword.toLowerCase()}%` })
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)
