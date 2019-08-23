@@ -36,7 +36,7 @@ export class SongService {
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
             .leftJoinAndSelect('song.author', 'author')
             .leftJoinAndSelect('song.album', 'album')
-            .where('LOWER(song.title) LIKE :title', { title: `%${keyword.toLowerCase()}%` })
+            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` })
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)
@@ -51,13 +51,16 @@ export class SongService {
     }
 
     private generateOrderFilter(filter: string): any {
-        const order: any = {};
+        const order = {};
         if (filter === 'revert_alphabet') {
-            order.title = 'DESC';
+            order['song.title'] = 'DESC';
         }
 
         if (filter === 'alphabet') {
-            order.title = 'ASC';
+            order['song.title'] = 'ASC';
+        }
+        if (filter === 'newest') {
+            order['song.createdAt'] = 'ASC';
         }
 
         return order;
