@@ -12,6 +12,9 @@ export const databaseProviders = [
                 username: configService.get('database.user'),
                 password: configService.get('database.password'),
                 database: configService.get('database.database'),
+                extra: {
+                    charset: 'utf8mb4_unicode_ci',
+                },
                 entities: [
                     __dirname + '/../**/*.entity{.ts,.js}',
                 ],
