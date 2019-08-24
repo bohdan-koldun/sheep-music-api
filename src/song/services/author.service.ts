@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository, Like } from 'typeorm';
 import { AuthorDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
@@ -30,6 +30,7 @@ export class AuthorService {
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AuthorDTO>> {
         const { keyword, limit, page, filter } = options;
+        Logger.log(JSON.stringify(options, null, 2));
         const [results, total] = await this.authorRepo
             .createQueryBuilder('author')
             .leftJoinAndSelect('author.songs', 'songs')
