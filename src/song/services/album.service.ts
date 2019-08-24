@@ -29,7 +29,7 @@ export class AlbumService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AlbumDTO>> {
-        const { keyword, limit, page } = options;
+        const { keyword, limit, page, filter } = options;
 
         const [results, total] = await this.albumRepo
             .createQueryBuilder('album')
@@ -39,7 +39,8 @@ export class AlbumService {
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .skip(page * limit)
             .take(limit)
-            .where('album.title like :title', { title: '%' + keyword + '%' })
+            .where('LOWER(album.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
+            .orderBy({ ...this.generateOrderFilter(filter) })
             .getManyAndCount();
 
         return new Pagination<AlbumDTO>({
@@ -48,5 +49,21 @@ export class AlbumService {
             total,
             results,
         });
+    }
+
+    private generateOrderFilter(filter: string): any {
+        const order = {};
+        if (filter === 'revert_alphabet') {
+            order['album.title'] = 'DESC';
+        }
+
+        if (filter === 'alphabet') {
+            order['album.title'] = 'ASC';
+        }
+        if (filter === 'newest') {
+            order['album.createdAt'] = 'ASC';
+        }
+
+        return order;
     }
 }

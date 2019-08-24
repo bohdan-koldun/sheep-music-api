@@ -29,7 +29,7 @@ export class AuthorService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AuthorDTO>> {
-        const { keyword, limit, page } = options;
+        const { keyword, limit, page, filter } = options;
         const [results, total] = await this.authorRepo
             .createQueryBuilder('author')
             .leftJoinAndSelect('author.songs', 'songs')
@@ -39,7 +39,8 @@ export class AuthorService {
             .leftJoinAndSelect('author.thumbnail', 'thumbnail')
             .skip(page * limit)
             .take(limit)
-            .where('author.title like :title', { title: '%' + keyword + '%' })
+            .where('LOWER(author.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
+            .orderBy({ ...this.generateOrderFilter(filter) })
             .getManyAndCount();
 
         return new Pagination<AuthorDTO>({
@@ -48,5 +49,21 @@ export class AuthorService {
             total,
             results,
         });
+    }
+
+    private generateOrderFilter(filter: string): any {
+        const order = {};
+        if (filter === 'revert_alphabet') {
+            order['author.title'] = 'DESC';
+        }
+
+        if (filter === 'alphabet') {
+            order['author.title'] = 'ASC';
+        }
+        if (filter === 'newest') {
+            order['author.createdAt'] = 'ASC';
+        }
+
+        return order;
     }
 }
