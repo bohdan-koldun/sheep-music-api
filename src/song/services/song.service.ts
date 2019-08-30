@@ -31,24 +31,12 @@ export class SongService {
     ): Promise<Pagination<SongDTO>> {
         const { keyword, limit, page, filter } = options;
 
-        console.log(this.songRepo
-            .createQueryBuilder('song')
-            .leftJoinAndSelect('song.audioMp3', 'audioMp3')
-            .leftJoinAndSelect('song.author', 'author')
-            .leftJoinAndSelect('song.album', 'album')
-            .where('song.title LIKE :keyword', { keyword: `%${ keyword.toLowerCase() }%` })
-           // .orWhere('LOWER(song.title) LIKE LOWER(:keyword)', { keyword })
-            .orderBy({ ...this.generateOrderFilter(filter) })
-            .take(limit)
-            .skip(limit * page).getQuery())
-
         const [results, total] = await this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
             .leftJoinAndSelect('song.author', 'author')
             .leftJoinAndSelect('song.album', 'album')
-            .where('LOWER(song.title COLLATE "en_US.UTF-8") LIKE :keyword', { keyword: `%${ keyword.toLowerCase() }%` })
-           // .orWhere('LOWER(song.title) LIKE LOWER(:keyword)', { keyword })
+            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` })
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)
