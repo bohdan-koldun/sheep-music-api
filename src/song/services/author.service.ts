@@ -6,7 +6,7 @@ import { Author } from '../entities/author.entity';
 
 @Injectable()
 export class AuthorService {
-    private readonly authorRepo: Repository<AuthorDTO>;
+    private readonly authorRepo: Repository<Author>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
@@ -17,13 +17,18 @@ export class AuthorService {
 
     async getBySlugOrId(identificator: string): Promise<AuthorDTO> {
         const id = parseInt(identificator, 10);
-        return await this.authorRepo.findOne({
-            where: [
-                { id: id ? id : null },
-                { slug: identificator },
-            ],
-            relations: ['songs', 'albums'],
-        });
+        return await this.authorRepo
+            .createQueryBuilder('author')
+            .leftJoinAndSelect('author.songs', 'songs')
+            .leftJoinAndSelect('songs.album', 'album')
+            .leftJoinAndSelect('songs.author', 'songAuthor')
+            .leftJoinAndSelect('author.albums', 'albums')
+            .leftJoinAndSelect('albums.thumbnail', 'albumsThumbnail')
+            .loadRelationCountAndMap('albums.songs', 'albums.songs')
+            .leftJoinAndSelect('author.thumbnail', 'thumbnail')
+            .where('author.slug=:slug', { slug: identificator })
+            .orWhere('author.id=:id', { id: id ? id : null })
+            .getOne();
     }
 
     async paginate(

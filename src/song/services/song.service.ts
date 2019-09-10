@@ -36,6 +36,7 @@ export class SongService {
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
             .leftJoinAndSelect('song.author', 'author')
             .leftJoinAndSelect('song.album', 'album')
+            .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` })
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)

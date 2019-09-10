@@ -6,7 +6,7 @@ import { PaginationOptionsInterface, Pagination } from '../../pagination';
 
 @Injectable()
 export class AlbumService {
-    private readonly albumRepo: Repository<AlbumDTO>;
+    private readonly albumRepo: Repository<Album>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
