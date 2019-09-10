@@ -21,6 +21,7 @@ export class AuthorService {
             .createQueryBuilder('author')
             .leftJoinAndSelect('author.songs', 'songs')
             .leftJoinAndSelect('songs.album', 'album')
+            .leftJoinAndSelect('songs.audioMp3', 'audioMp3')
             .leftJoinAndSelect('songs.author', 'songAuthor')
             .leftJoinAndSelect('author.albums', 'albums')
             .leftJoinAndSelect('albums.thumbnail', 'albumsThumbnail')
