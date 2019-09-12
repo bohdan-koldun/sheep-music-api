@@ -24,6 +24,7 @@ export class SongService {
                 { id: id ? id : null },
                 { slug: identificator },
             ],
+            relations: ['tags'],
         });
         return song ? song.toResponseObject() : null;
     }
