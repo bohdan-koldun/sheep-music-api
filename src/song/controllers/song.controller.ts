@@ -36,4 +36,11 @@ export class SongController {
         return await this.prettifyService.prettifyChords();
     }
 
+    @Get('prettify/texts')
+    @UseGuards(RolesGuard)
+    @Roles('admin')
+    @UseGuards(AuthGuard('jwt'))
+    async prettifyText() {
+        return await this.prettifyService.normalizeSongsText();
+    }
 }
