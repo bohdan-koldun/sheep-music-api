@@ -4,6 +4,7 @@ import {
     SongController,
     AlbumController,
     AuthorController,
+    VideoController,
 } from './controllers';
 
 @Module({
@@ -11,6 +12,7 @@ import {
         SongController,
         AlbumController,
         AuthorController,
+        VideoController,
     ],
     providers: [
         ...songProviders,

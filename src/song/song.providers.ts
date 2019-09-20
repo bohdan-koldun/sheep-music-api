@@ -4,6 +4,7 @@ import {
     PrettifyService,
     AlbumService,
     AuthorService,
+    VideoService,
 } from './services';
 
 export const songProviders = [
@@ -12,4 +13,5 @@ export const songProviders = [
     PrettifyService,
     AlbumService,
     AuthorService,
+    VideoService,
 ];
