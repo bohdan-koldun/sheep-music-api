@@ -20,6 +20,7 @@ export class SongController {
             page: request.query.hasOwnProperty('page') ? request.query.page : 0,
             keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
             filter: request.query.hasOwnProperty('filter') ? request.query.filter : '',
+            tags: request.query.hasOwnProperty('tags') ? request.query.tags : '',
         });
     }
 

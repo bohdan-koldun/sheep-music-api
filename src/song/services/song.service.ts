@@ -32,15 +32,21 @@ export class SongService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
-        const { keyword, limit, page, filter } = options;
-
-        const [results, total] = await this.songRepo
+        const { keyword, limit, page, filter, tags } = options;
+        const query = this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
             .leftJoinAndSelect('song.author', 'author')
             .leftJoinAndSelect('song.album', 'album')
+            .leftJoinAndSelect('song.tags', 'tags')
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
-            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` })
+            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
+
+        if (tags) {
+            query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split('|') });
+        }
+
+        const [results, total] = await query
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)

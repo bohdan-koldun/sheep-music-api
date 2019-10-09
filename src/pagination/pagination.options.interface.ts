@@ -3,4 +3,5 @@ export interface PaginationOptionsInterface {
     page: number;
     keyword: string;
     filter: string;
+    tags?: string;
 }
