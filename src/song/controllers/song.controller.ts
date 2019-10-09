@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../common/decorators';
 import { SongService, PrettifyService } from '../services';
 import { Pagination } from '../../pagination';
-import { SongDTO } from '../dto';
+import { SongDTO, TagDTO } from '../dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Controller('songs')
@@ -27,6 +27,11 @@ export class SongController {
     @Get(':id')
     async findOne(@Param('id') id): Promise<SongDTO> {
         return await this.songService.getBySlugOrId(id);
+    }
+
+    @Get('/tags/all')
+    async allTags(): Promise<TagDTO[]> {
+        return await this.songService.getSongTags();
     }
 
     @Get('prettify/chords')

@@ -2,19 +2,21 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository, Like } from 'typeorm';
 import { slugify } from 'transliteration';
 import { Song } from '../entities/song.entity';
-import { SongDTO } from '../dto';
+import { Tag } from '../entities/tag.entity';
+import { SongDTO, TagDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
-import { randomBytes } from 'crypto';
 
 @Injectable()
 export class SongService {
     private readonly songRepo: Repository<Song>;
+    private readonly tagRepo: Repository<Tag>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
         private readonly conection: Connection,
     ) {
         this.songRepo = this.conection.getRepository(Song);
+        this.tagRepo = this.conection.getRepository(Tag);
     }
 
     async getBySlugOrId(identificator: string): Promise<SongDTO> {
@@ -27,6 +29,10 @@ export class SongService {
             relations: ['tags'],
         });
         return song ? song.toResponseObject() : null;
+    }
+
+    async getSongTags(): Promise<TagDTO[]> {
+        return await this.tagRepo.find();
     }
 
     async paginate(
