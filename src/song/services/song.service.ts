@@ -48,7 +48,7 @@ export class SongService {
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
 
-        if (tags) {
+        if (tags && tags !== 'null') {
             query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split('|') });
         }
 
