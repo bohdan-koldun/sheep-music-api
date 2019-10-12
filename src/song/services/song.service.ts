@@ -49,7 +49,7 @@ export class SongService {
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
 
         if (tags && tags !== 'null') {
-            query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split('|') });
+            query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split(',') });
         }
 
         const [results, total] = await query
