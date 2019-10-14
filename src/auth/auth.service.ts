@@ -57,7 +57,7 @@ export class AuthService {
         const { email } = data;
         const user = this.conection
             .getRepository(User)
-            .findOne({ email });
+            .findOne({ where: { email }, relations: ['roles', 'roles.role'] });
         return user;
     }
 }
