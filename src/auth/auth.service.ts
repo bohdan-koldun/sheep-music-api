@@ -16,7 +16,7 @@ export class AuthService {
         const { email, password } = data;
         const user = await this.conection
             .getRepository(User)
-            .findOne({ email });
+            .findOne({ where: {email}, relations: ['roles', 'roles.role'] });
         if (!user || !(await user.comparePassword(password))) {
             throw new HttpException(
                 'Invalid username/password',
