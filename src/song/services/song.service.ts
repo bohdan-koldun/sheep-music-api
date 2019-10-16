@@ -1,15 +1,18 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { Connection, Repository, Like } from 'typeorm';
 import { slugify } from 'transliteration';
 import { Song } from '../entities/song.entity';
 import { Tag } from '../entities/tag.entity';
 import { SongDTO, TagDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
+import { PrettifyService } from './prettify.service';
 
 @Injectable()
 export class SongService {
     private readonly songRepo: Repository<Song>;
     private readonly tagRepo: Repository<Tag>;
+    @Inject()
+    private readonly prettifyService: PrettifyService;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
@@ -33,6 +36,15 @@ export class SongService {
 
     async getSongTags(): Promise<TagDTO[]> {
         return await this.tagRepo.find();
+    }
+
+    async editSong(song: SongDTO): Promise<SongDTO> {
+        if (!await this.songRepo.findOne({ id: song.id })) {
+            throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
+        }
+        song.text = this.prettifyService.normalizeText(song.text);
+        await this.songRepo.save(song);
+        return await this.getBySlugOrId(song.slug);
     }
 
     async paginate(

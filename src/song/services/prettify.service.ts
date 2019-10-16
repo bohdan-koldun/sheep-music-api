@@ -1,5 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
+import * as striptags from 'striptags';
 import { Song } from '../entities/song.entity';
 
 // tslint:disable-next-line:max-line-length
@@ -90,10 +91,11 @@ export class PrettifyService {
         return 'successful normalized texts';
     }
 
-    private normalizeText(text) {
+    normalizeText(text) {
         if (!text) { return null; }
+        const clearedFromTagsText = striptags(text);
         const result = [];
-        text.split(/\r\n|\n/g).forEach((line, index) => {
+        clearedFromTagsText.split(/\r\n|\n/g).forEach((line, index) => {
             if (/Припев:|ПРИПЕВ|Пр:|Пр:в|ПР-в:|Пр-в:|Пр-в:|Припев/g.test(line)) {
                 return result.push(`<span class="chorus">Припев:</span>`);
             } else if (/Приспів:/g.test(line)) {
