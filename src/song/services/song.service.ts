@@ -43,8 +43,8 @@ export class SongService {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
         }
         song.text = this.prettifyService.normalizeText(song.text);
-        const { parsedSource } = await this.songRepo.save(song);
-        return { parsedSource, ...await this.getBySlugOrId(song.slug) };
+        await this.songRepo.save(song);
+        return await this.getBySlugOrId(song.slug);
     }
 
     async paginate(

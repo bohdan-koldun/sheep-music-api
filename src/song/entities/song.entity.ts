@@ -26,7 +26,7 @@ export class Song {
     @Column({ type: 'varchar', length: 10, nullable: true })
     chordsKey: string;
 
-    @Column({ type: 'varchar', length: 500, nullable: true, select: false })
+    @Column({ type: 'varchar', length: 500, nullable: true })
     parsedSource: string;
 
     @Column({ type: 'varchar', length: 500, nullable: true })
@@ -72,6 +72,7 @@ export class Song {
             author,
             tags,
             video,
+            parsedSource,
         } = this;
 
         return {
@@ -86,6 +87,7 @@ export class Song {
             author,
             tags,
             video,
+            parsedSource,
         };
     }
 }
