@@ -1,11 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToMany, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToMany, ManyToOne, Index } from 'typeorm';
 import { Song } from './song.entity';
 
 @Entity('translations')
 export class Translation {
+    @Index()
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Index()
     @Column({ type: 'varchar', length: 20 })
     language: string;
 
