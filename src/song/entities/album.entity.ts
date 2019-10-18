@@ -1,22 +1,30 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Column, Entity, PrimaryGeneratedColumn,
+    OneToOne, JoinColumn, OneToMany, ManyToOne,
+    CreateDateColumn, UpdateDateColumn, Index,
+} from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
 import { Author } from './author.entity';
 
 @Entity('albums')
 export class Album {
+    @Index()
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 100, unique: true  })
+    @Index()
+    @Column({ type: 'varchar', length: 100, unique: true })
     slug: string;
 
+    @Index()
     @Column({ type: 'varchar', length: 255 })
     title: string;
 
     @Column({ type: 'varchar', length: 1500, nullable: true })
     description: string;
 
+    @Index()
     @Column({ type: 'varchar', length: 10, nullable: true })
     year: string;
 
@@ -29,6 +37,7 @@ export class Album {
     @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
 
+    @Index()
     @CreateDateColumn({ name: 'created_at', nullable: false })
     createdAt: Date;
 
