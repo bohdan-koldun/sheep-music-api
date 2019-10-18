@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, Index } from 'typeorm';
 import { Song } from './song.entity';
 
 @Entity('tags')
 export class Tag {
+    @Index()
     @PrimaryGeneratedColumn()
     id: number;
 
