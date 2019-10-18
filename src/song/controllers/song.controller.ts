@@ -37,7 +37,7 @@ export class SongController {
 
     @Put()
     @UseGuards(RolesGuard)
-    @Roles('admin')
+    @Roles('admin', 'moderator')
     @UseGuards(AuthGuard('jwt'))
     async edit(@Body(new ValidationPipe()) song: SongDTO) {
         return await this.songService.editSong(song);
