@@ -1,4 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, JoinTable, ManyToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+    Column, Entity, PrimaryGeneratedColumn, JoinColumn,
+    ManyToOne, JoinTable, ManyToMany,
+    CreateDateColumn, UpdateDateColumn, Index,
+} from 'typeorm';
 import { SongDTO } from '../dto';
 import { Attachment } from './attachment.entity';
 import { Album } from './album.entity';
@@ -8,12 +12,15 @@ import { Translation } from './translation.entity';
 
 @Entity('songs')
 export class Song {
+    @Index()
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Index()
     @Column({ type: 'varchar', length: 100, unique: true })
     slug: string;
 
+    @Index()
     @Column({ type: 'varchar', length: 255 })
     title: string;
 
@@ -32,9 +39,11 @@ export class Song {
     @Column({ type: 'varchar', length: 500, nullable: true })
     video: string;
 
+    @Index()
     @CreateDateColumn({ name: 'created_at', nullable: false })
     createdAt: Date;
 
+    @Index()
     @UpdateDateColumn({ name: 'updated_at', nullable: true })
     updatedAt: Date;
 
