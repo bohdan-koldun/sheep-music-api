@@ -104,9 +104,9 @@ export class PrettifyService {
                 return result.push(`<span class="chorus">Запев:</span>`);
             } else if (/Проигрыш:/g.test(line)) {
                 return result.push(`<span class="chorus">Проигрыш:</span>`);
-            } else if (/ВСТАВКА:/g.test(line)) {
+            } else if (/ВСТАВКА:|Вставка:/g.test(line)) {
                 return result.push(`<span class="chorus">Вставка:</span>`);
-            } else if (/Пред припев:/g.test(line)) {
+            } else if (/Пред припев:|Пред-припев:/g.test(line)) {
                 return result.push(`<span class="chorus">Пред припев:</span>`);
             } else if (/Pre chorus:|PRE CHORUS:/g.test(line)) {
                 return result.push(`<span class="chorus">Pre chorus:</span>`);
@@ -114,35 +114,35 @@ export class PrettifyService {
                 return result.push(`<span class="chorus">Post chorus:</span>`);
             } else if (/Outro:/g.test(line)) {
                 return result.push(`<span class="chorus">Outro:</span>`);
-            } else if (/Chorus|CHORUS:/g.test(line)) {
+            } else if (/Chorus|CHORUS:|Chorus:/g.test(line)) {
                 return result.push(`<span class="chorus">Chorus:</span>`);
             } else if (/Ending:/g.test(line)) {
                 return result.push(`<span class="chorus">Ending:</span>`);
             } else if (/2 куплет:|КУПЛЕТ 2|2 КУПЛЕТ:|Куплет 2:/g.test(line)) {
                 return result.push(`<span class="verse">2 куплет:</span>`);
-            } else if (/1 куплет:|КУПЛЕТ 1|1 КУПЛЕТ:/g.test(line)) {
+            } else if (/1 куплет:|КУПЛЕТ 1|1 КУПЛЕТ:|Куплет 1:/g.test(line)) {
                 return result.push(`<span class="verse">1 куплет:</span>`);
-            } else if (/3 куплет:|3 КУПЛЕТ:|КУПЛЕТ 3:/g.test(line)) {
+            } else if (/3 куплет:|3 КУПЛЕТ:|КУПЛЕТ 3:|Куплет 3:/g.test(line)) {
                 return result.push(`<span class="verse">3 куплет:</span>`);
-            } else if (/4 куплет:/g.test(line)) {
+            } else if (/4 куплет:|4 КУПЛЕТ:|КУПЛЕТ 4:|Куплет 4:/g.test(line)) {
                 return result.push(`<span class="verse">4 куплет:</span>`);
-            } else if (/5 куплет:/g.test(line)) {
+            } else if (/5 куплет:|5 КУПЛЕТ:|КУПЛЕТ 5:|Куплет 5:/g.test(line)) {
                 return result.push(`<span class="verse">5 куплет:</span>`);
-            } else if (/6 куплет:/g.test(line)) {
+            } else if (/6 куплет:|6 КУПЛЕТ:|КУПЛЕТ 6:|Куплет 6:/g.test(line)) {
                 return result.push(`<span class="verse">6 куплет:</span>`);
             } else if (/1 verse:|Verse 1|Verse: 1|VERSE: 1|1 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">1 verse:</span>`);
-            } else if (/2 verse:|Verse: 2|VERSE: 2|2 VERSE:/g.test(line)) {
+            } else if (/2 verse:|Verse 2|Verse: 2|VERSE: 2|2 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">2 verse:</span>`);
-            } else if (/3 verse:|3 VERSE:/g.test(line)) {
+            } else if (/3 verse:|Verse 3|Verse: 3|VERSE: 3|3 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">3 verse:</span>`);
-            } else if (/4 verse:/g.test(line)) {
+            } else if (/4 verse:|Verse 4|Verse: 4|VERSE: 4|4 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">4 verse:</span>`);
-            } else if (/5 verse:/g.test(line)) {
+            } else if (/5 verse:|Verse 5|Verse: 5|VERSE: 5|5 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">5 verse:</span>`);
-            } else if (/6 verse:/g.test(line)) {
+            } else if (/6 verse:|Verse 6|Verse: 6|VERSE: 6|6 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">6 verse:</span>`);
-            } else if (/7 verse:/g.test(line)) {
+            } else if (/7 verse:|Verse 7|Verse: 7|VERSE: 7|7 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">7 verse:</span>`);
             } else if (/Verse:|VERSE:|Verse/g.test(line)) {
                 return result.push(`<span class="verse">Verse:</span>`);
