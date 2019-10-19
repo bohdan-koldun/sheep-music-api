@@ -43,6 +43,7 @@ export class SongService {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
         }
         song.text = this.prettifyService.normalizeText(song.text);
+        song.chords = this.prettifyService.normalizeText(song.chords);
         await this.songRepo.save(song);
         return await this.getBySlugOrId(song.slug);
     }
