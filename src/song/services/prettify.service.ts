@@ -161,7 +161,7 @@ export class PrettifyService {
             } else if (/TAG:|Tag:/g.test(line)) {
                 return result.push(`<span class="bridge">Tag:</span>`);
             } else {
-                return result.push(line.trim());
+                return result.push(line);
             }
         });
 
