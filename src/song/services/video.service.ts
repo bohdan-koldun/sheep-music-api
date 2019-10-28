@@ -37,6 +37,8 @@ export class VideoService {
             .select(['song.id', 'song.slug', 'song.title', 'song.video'])
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` })
             .andWhere('song.video is not null')
+            .andWhere('song.video is not null')
+            .andWhere('song.video != :video', { video: '' })
             .orderBy({ ...this.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)
