@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { Connection, Repository, Like } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { slugify } from 'transliteration';
 import { Song } from '../entities/song.entity';
 import { Tag } from '../entities/tag.entity';

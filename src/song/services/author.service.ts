@@ -1,12 +1,16 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
-import { Connection, Repository, Like } from 'typeorm';
+import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import { Connection, Repository } from 'typeorm';
 import { AuthorDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { Author } from '../entities/author.entity';
+import { AttachmentService } from './attachment.service';
+import { slugify } from 'transliteration';
 
 @Injectable()
 export class AuthorService {
     private readonly authorRepo: Repository<Author>;
+    @Inject()
+    private readonly attachmentService: AttachmentService;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
@@ -30,6 +34,51 @@ export class AuthorService {
             .where('author.slug=:slug', { slug: identificator })
             .orWhere('author.id=:id', { id: id ? id : null })
             .getOne();
+    }
+
+    async editAuthor(author: AuthorDTO, avatar: Buffer): Promise<AuthorDTO> {
+        const oldData = await this.authorRepo.findOne({ id: author.id });
+        if (!oldData) {
+            throw new HttpException('Ошибка редактирования автора!', HttpStatus.BAD_REQUEST);
+        }
+
+        if (avatar) {
+            author.thumbnail = await this.attachmentService
+                .saveSquareImageAttachment(
+                    avatar,
+                    600,
+                    oldData.slug,
+                    oldData.thumbnail,
+                );
+        }
+
+        delete author.slug;
+        await this.authorRepo.update({ id: author.id }, { ...author });
+        return await this.getBySlugOrId(String(author.id));
+    }
+
+    async addAuthor(author: AuthorDTO, avatar: Buffer): Promise<AuthorDTO> {
+        const slug = slugify(author.title);
+
+        if (avatar) {
+            author.thumbnail = await this.attachmentService
+                .saveSquareImageAttachment(
+                    avatar,
+                    600,
+                    slug,
+                );
+        }
+        let newAuthor;
+        try {
+            newAuthor = await this.authorRepo.save({ ...author, slug });
+        } catch (error) {
+            newAuthor =  await this.authorRepo.save({
+                ...author,
+                slug: `${slugify(author.title)}${Date.now()}`,
+            });
+        }
+
+        return await this.getBySlugOrId(String(newAuthor.id));
     }
 
     async paginate(

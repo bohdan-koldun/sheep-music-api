@@ -5,6 +5,7 @@ import {
     AlbumService,
     AuthorService,
     VideoService,
+    AttachmentService,
 } from './services';
 
 export const songProviders = [
@@ -14,4 +15,5 @@ export const songProviders = [
     AlbumService,
     AuthorService,
     VideoService,
+    AttachmentService,
 ];

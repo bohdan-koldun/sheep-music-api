@@ -9,6 +9,7 @@ export class AuthorDTO {
     id: number;
 
     @MinLength(2)
+    @IsOptional()
     slug: string;
 
     @MinLength(2)

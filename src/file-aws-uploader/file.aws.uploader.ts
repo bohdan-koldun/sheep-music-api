@@ -15,8 +15,9 @@ export class FileAwsUploaderService {
 
     constructor(private readonly configService: ConfigService) {
         Object.keys(this.config).forEach(key => {
-            this.config[key] = configService.get(`spaces.${key}`);
+            this.config[key] = configService.get(`space.${key}`);
         });
+
         const { protocol, host, port } = new aws.Endpoint(
             this.config.endpoint,
         );

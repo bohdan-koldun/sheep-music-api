@@ -4,6 +4,7 @@ import { PrettifyService } from './prettify.service';
 import { AlbumService } from './album.service';
 import { AuthorService } from './author.service';
 import { VideoService } from './video.service';
+import { AttachmentService } from './attachment.service';
 
 export {
     SongParserService,
@@ -12,4 +13,5 @@ export {
     AlbumService,
     AuthorService,
     VideoService,
+    AttachmentService,
 };

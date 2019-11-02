@@ -1,4 +1,13 @@
-import { Controller, Inject, Get, Request, Param } from '@nestjs/common';
+import { Controller, Inject, Get, Request, Param, Put, UseGuards, Body, ValidationPipe, UseInterceptors, UploadedFile, Post } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+    ApiConsumes,
+    ApiImplicitFile,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { imageMulterilter } from '../../common/filters/multer.files.filter';
+import { Roles } from '../../common/decorators';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthorService } from '../services';
 import { Pagination } from '../../pagination';
 import { AuthorDTO } from '../dto';
@@ -21,6 +30,40 @@ export class AuthorController {
     @Get(':id')
     async findOne(@Param('id') id): Promise<AuthorDTO> {
         return await this.authorService.getBySlugOrId(id);
+    }
+
+    @Put()
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'moderator')
+    @UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileInterceptor('avatar', {
+        limits: {
+            fileSize:  3 * 1024 * 1024, // 2 Mb
+        },
+        fileFilter: imageMulterilter,
+
+    }))
+    @ApiConsumes('multipart/form-data')
+    @ApiImplicitFile({ name: 'avatar', required: false })
+    async edit(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO) {
+        return await this.authorService.editAuthor(author, avatar);
+    }
+
+    @Post()
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'moderator')
+    @UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileInterceptor('avatar', {
+        limits: {
+            fileSize:  3 * 1024 * 1024, // 2 Mb
+        },
+        fileFilter: imageMulterilter,
+
+    }))
+    @ApiConsumes('multipart/form-data')
+    @ApiImplicitFile({ name: 'avatar', required: false })
+    async add(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO) {
+        return await this.authorService.addAuthor(author, avatar);
     }
 
 }
