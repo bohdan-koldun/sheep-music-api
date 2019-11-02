@@ -44,8 +44,9 @@ export class SongService {
         }
         song.text = this.prettifyService.normalizeText(song.text);
         song.chords = this.prettifyService.normalizeText(song.chords);
-        await this.songRepo.save(song);
-        return await this.getBySlugOrId(song.slug);
+        delete song.slug;
+        await this.songRepo.update({id: song.id}, song);
+        return await this.getBySlugOrId(String(song.id));
     }
 
     async paginate(
