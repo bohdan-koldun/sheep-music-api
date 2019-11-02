@@ -112,6 +112,10 @@ export class AlbumService {
         });
     }
 
+    async getIdTitleList() {
+        return await this.albumRepo.find({ select: ['id', 'title'] });
+    }
+
     private generateOrderFilter(filter: string): any {
         const order = {};
         if (filter === 'revert_alphabet') {

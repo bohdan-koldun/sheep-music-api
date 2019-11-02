@@ -31,6 +31,10 @@ export class AuthorController {
     async findOne(@Param('id') id): Promise<AuthorDTO> {
         return await this.authorService.getBySlugOrId(id);
     }
+    @Get('list/id')
+    async getAllListId(): Promise<AuthorDTO[]> {
+        return await this.authorService.getIdTitleList();
+    }
 
     @Put()
     @UseGuards(RolesGuard)

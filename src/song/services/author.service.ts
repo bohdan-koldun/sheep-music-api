@@ -107,6 +107,10 @@ export class AuthorService {
         });
     }
 
+    async getIdTitleList() {
+        return await this.authorRepo.find({select: ['id', 'title']});
+    }
+
     private generateOrderFilter(filter: string): any {
         const order = {};
         if (filter === 'revert_alphabet') {

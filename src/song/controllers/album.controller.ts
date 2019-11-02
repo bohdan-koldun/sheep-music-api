@@ -32,6 +32,11 @@ export class AlbumController {
         return await this.albumService.getBySlugOrId(id);
     }
 
+    @Get('list/id')
+    async getAllListId(): Promise<AlbumDTO[]> {
+        return await this.albumService.getIdTitleList();
+    }
+
     @Put()
     @UseGuards(RolesGuard)
     @Roles('admin', 'moderator')
