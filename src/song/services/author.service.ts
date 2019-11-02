@@ -1,10 +1,10 @@
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
+import { slugify } from 'transliteration';
 import { AuthorDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { Author } from '../entities/author.entity';
 import { AttachmentService } from './attachment.service';
-import { slugify } from 'transliteration';
 
 @Injectable()
 export class AuthorService {
