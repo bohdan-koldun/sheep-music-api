@@ -10,6 +10,9 @@ export class Tag {
     @Column({ type: 'varchar', length: 50 })
     name: string;
 
+    @Column({ type: 'int', default: 0 })
+    songCount: number;
+
     @ManyToMany(type => Song, song => song.tags, { cascade: false })
     songs: Song[];
 }
