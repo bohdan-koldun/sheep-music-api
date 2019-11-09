@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { songProviders } from './song.providers';
 import {
     SongController,
@@ -7,6 +7,7 @@ import {
     VideoController,
 } from './controllers';
 
+@Global()
 @Module({
     controllers: [
         SongController,

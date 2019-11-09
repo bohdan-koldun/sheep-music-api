@@ -34,8 +34,11 @@ export class SongService {
         return song ? song.toResponseObject() : null;
     }
 
-    async getSongTags(): Promise<TagDTO[]> {
-        return await this.tagRepo.find();
+    async getSongTags(): Promise<Tag[]> {
+        return await this.tagRepo
+            .createQueryBuilder('tags')
+            .loadRelationCountAndMap('tags.songsCount', 'tags.songs')
+            .getMany();
     }
 
     async editSong(song: SongDTO): Promise<SongDTO> {
@@ -45,7 +48,7 @@ export class SongService {
         song.text = this.prettifyService.normalizeText(song.text);
         song.chords = this.prettifyService.normalizeText(song.chords);
         delete song.slug;
-        await this.songRepo.update({id: song.id}, song);
+        await this.songRepo.update({ id: song.id }, song);
         return await this.getBySlugOrId(String(song.id));
     }
 

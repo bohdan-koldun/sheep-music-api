@@ -48,6 +48,7 @@
     "compression": "^1.7.4",
     "dotenv": "^8.0.0",
     "moment": "^2.24.0",
+    "nest-schedule": "^0.6.3",
     "nestjs-config": "^1.4.2",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",

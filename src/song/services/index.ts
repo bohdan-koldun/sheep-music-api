@@ -5,6 +5,7 @@ import { AlbumService } from './album.service';
 import { AuthorService } from './author.service';
 import { VideoService } from './video.service';
 import { AttachmentService } from './attachment.service';
+import { TagsService } from './tags.service';
 
 export {
     SongParserService,
@@ -14,4 +15,5 @@ export {
     AuthorService,
     VideoService,
     AttachmentService,
+    TagsService,
 };
