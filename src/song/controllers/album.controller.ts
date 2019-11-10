@@ -32,6 +32,16 @@ export class AlbumController {
         return await this.albumService.getBySlugOrId(id);
     }
 
+    @Get('increment/view/:id')
+    async incrementView(@Param('id') id): Promise<void> {
+        return await this.albumService.incrementView(id);
+    }
+
+    @Get('increment/like/:id')
+    async incrementLike(@Param('id') id): Promise<void> {
+        return await this.albumService.incrementLike(id);
+    }
+
     @Get('list/id')
     async getAllListId(): Promise<AlbumDTO[]> {
         return await this.albumService.getIdTitleList();

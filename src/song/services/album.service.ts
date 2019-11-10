@@ -131,4 +131,14 @@ export class AlbumService {
 
         return order;
     }
+
+    async incrementView(id: number) {
+        await this.albumRepo
+        .increment({ id }, 'viewCount', 1);
+    }
+
+    async incrementLike(id: number) {
+        await this.albumRepo
+        .increment({ id }, 'likeCount', 1);
+    }
 }
