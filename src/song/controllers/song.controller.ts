@@ -1,7 +1,7 @@
 import { Controller, Inject, Get, Request, Param, UseGuards, Body, Put } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../common/decorators';
-import { SongService, PrettifyService } from '../services';
+import { SongService, PrettifyService, TagsService } from '../services';
 import { Pagination } from '../../pagination';
 import { SongDTO, TagDTO } from '../dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -11,6 +11,8 @@ import { ValidationPipe } from '../../common/pipes/validation.pipe';
 export class SongController {
     @Inject()
     private readonly songService: SongService;
+    @Inject()
+    private readonly tagsService: TagsService;
     @Inject()
     private readonly prettifyService: PrettifyService;
 
@@ -32,7 +34,7 @@ export class SongController {
 
     @Get('/tags/all')
     async allTags(): Promise<TagDTO[]> {
-        return await this.songService.getSongTags();
+        return await this.tagsService.getSongTags();
     }
 
     @Put()

@@ -34,13 +34,6 @@ export class SongService {
         return song ? song.toResponseObject() : null;
     }
 
-    async getSongTags(): Promise<Tag[]> {
-        return await this.tagRepo
-            .createQueryBuilder('tags')
-            .loadRelationCountAndMap('tags.songsCount', 'tags.songs')
-            .getMany();
-    }
-
     async editSong(song: SongDTO): Promise<SongDTO> {
         if (!await this.songRepo.findOne({ id: song.id })) {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
