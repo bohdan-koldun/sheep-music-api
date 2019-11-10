@@ -33,6 +33,12 @@ export class SongDTO {
     parsedSource?: string;
 
     @IsOptional()
+    viewCount: number;
+
+    @IsOptional()
+    likeCount: number;
+
+    @IsOptional()
     album: Album;
 
     @IsOptional()

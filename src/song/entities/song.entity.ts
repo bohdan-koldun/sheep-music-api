@@ -88,6 +88,8 @@ export class Song {
             tags,
             video,
             parsedSource,
+            viewCount,
+            likeCount,
         } = this;
 
         return {
@@ -103,6 +105,8 @@ export class Song {
             tags,
             video,
             parsedSource,
+            viewCount,
+            likeCount,
         };
     }
 }
