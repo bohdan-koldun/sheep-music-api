@@ -31,6 +31,17 @@ export class AuthorController {
     async findOne(@Param('id') id): Promise<AuthorDTO> {
         return await this.authorService.getBySlugOrId(id);
     }
+
+    @Get('increment/view/:id')
+    async incrementView(@Param('id') id): Promise<void> {
+        return await this.authorService.incrementView(id);
+    }
+
+    @Get('increment/like/:id')
+    async incrementLike(@Param('id') id): Promise<void> {
+        return await this.authorService.incrementLike(id);
+    }
+
     @Get('list/id')
     async getAllListId(): Promise<AuthorDTO[]> {
         return await this.authorService.getIdTitleList();

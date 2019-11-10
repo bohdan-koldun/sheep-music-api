@@ -32,6 +32,16 @@ export class SongController {
         return await this.songService.getBySlugOrId(id);
     }
 
+    @Get('increment/view/:id')
+    async incrementView(@Param('id') id): Promise<void> {
+        return await this.songService.incrementView(id);
+    }
+
+    @Get('increment/like/:id')
+    async incrementLike(@Param('id') id): Promise<void> {
+        return await this.songService.incrementLike(id);
+    }
+
     @Get('/tags/all')
     async allTags(): Promise<TagDTO[]> {
         return await this.tagsService.getSongTags();

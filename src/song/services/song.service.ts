@@ -131,4 +131,14 @@ export class SongService {
 
         return 'done change slugs';
     }
+
+    async incrementView(id: number) {
+        await this.songRepo
+        .increment({ id }, 'viewCount', 1);
+    }
+
+    async incrementLike(id: number) {
+        await this.songRepo
+        .increment({ id }, 'likeCount', 1);
+    }
 }
