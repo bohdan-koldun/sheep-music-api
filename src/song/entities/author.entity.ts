@@ -23,6 +23,12 @@ export class Author {
     @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
 
+    @Column({ type: 'int',  default: 0 })
+    viewCount: number;
+
+    @Column({ type: 'int',  default: 0 })
+    likeCount: number;
+
     @Index()
     @CreateDateColumn({ name: 'created_at', nullable: false })
     createdAt: Date;
