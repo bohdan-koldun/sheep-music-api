@@ -54,6 +54,12 @@ export class Song {
     @Column({ type: 'varchar', length: 20, nullable: true })
     language: string;
 
+    @Column({ type: 'int',  default: 0 })
+    viewCount: number;
+
+    @Column({ type: 'int',  default: 0 })
+    likeCount: number;
+
     @ManyToOne(type => Album, album => album.songs, { cascade: false, eager: true })
     album: Album;
 
