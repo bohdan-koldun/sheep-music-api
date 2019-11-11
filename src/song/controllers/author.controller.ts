@@ -1,4 +1,7 @@
-import { Controller, Inject, Get, Request, Param, Put, UseGuards, Body, ValidationPipe, UseInterceptors, UploadedFile, Post } from '@nestjs/common';
+import {
+    Controller, Inject, Get, Request, Param, Put, UseGuards, Body,
+    ValidationPipe, UseInterceptors, UploadedFile, Post, HttpCode,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
     ApiConsumes,
@@ -33,13 +36,15 @@ export class AuthorController {
     }
 
     @Get('increment/view/:id')
+    @HttpCode(204)
     async incrementView(@Param('id') id): Promise<void> {
-        return await this.authorService.incrementView(id);
+        await this.authorService.incrementView(id);
     }
 
     @Get('increment/like/:id')
+    @HttpCode(204)
     async incrementLike(@Param('id') id): Promise<void> {
-        return await this.authorService.incrementLike(id);
+        await this.authorService.incrementLike(id);
     }
 
     @Get('list/id')
@@ -53,7 +58,7 @@ export class AuthorController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize:  3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024, // 2 Mb
         },
         fileFilter: imageMulterilter,
 
@@ -70,7 +75,7 @@ export class AuthorController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize:  3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024, // 2 Mb
         },
         fileFilter: imageMulterilter,
 

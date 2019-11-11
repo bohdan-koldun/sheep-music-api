@@ -1,4 +1,4 @@
-import { Controller, Inject, Get, Request, Param, UseGuards, Body, Put } from '@nestjs/common';
+import { Controller, Inject, Get, Request, Param, UseGuards, Body, Put, HttpCode } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../common/decorators';
 import { SongService, PrettifyService, TagsService } from '../services';
@@ -33,13 +33,15 @@ export class SongController {
     }
 
     @Get('increment/view/:id')
+    @HttpCode(204)
     async incrementView(@Param('id') id): Promise<void> {
-        return await this.songService.incrementView(id);
+        await this.songService.incrementView(id);
     }
 
     @Get('increment/like/:id')
+    @HttpCode(204)
     async incrementLike(@Param('id') id): Promise<void> {
-        return await this.songService.incrementLike(id);
+        await this.songService.incrementLike(id);
     }
 
     @Get('/tags/all')

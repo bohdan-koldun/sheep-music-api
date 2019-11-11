@@ -1,4 +1,7 @@
-import { Controller, Inject, Get, Request, Param, Put, Post, UseGuards, UseInterceptors, UploadedFile, Body, ValidationPipe } from '@nestjs/common';
+import {
+    Controller, Inject, Get, Request, Param, Put, Post, UseGuards,
+    UseInterceptors, UploadedFile, Body, ValidationPipe, HttpCode,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
     ApiConsumes,
@@ -23,7 +26,7 @@ export class AlbumController {
             limit: request.query.hasOwnProperty('limit') ? request.query.limit : 20,
             page: request.query.hasOwnProperty('page') ? request.query.page : 0,
             keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
-            filter:  request.query.hasOwnProperty('filter') ? request.query.filter : '',
+            filter: request.query.hasOwnProperty('filter') ? request.query.filter : '',
         });
     }
 
@@ -33,13 +36,15 @@ export class AlbumController {
     }
 
     @Get('increment/view/:id')
+    @HttpCode(204)
     async incrementView(@Param('id') id): Promise<void> {
-        return await this.albumService.incrementView(id);
+        await this.albumService.incrementView(id);
     }
 
     @Get('increment/like/:id')
+    @HttpCode(204)
     async incrementLike(@Param('id') id): Promise<void> {
-        return await this.albumService.incrementLike(id);
+        await this.albumService.incrementLike(id);
     }
 
     @Get('list/id')
@@ -53,7 +58,7 @@ export class AlbumController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize:  3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024, // 2 Mb
         },
         fileFilter: imageMulterilter,
 
@@ -70,7 +75,7 @@ export class AlbumController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize:  3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024, // 2 Mb
         },
         fileFilter: imageMulterilter,
 
