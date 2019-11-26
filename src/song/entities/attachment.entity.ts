@@ -12,4 +12,7 @@ export class Attachment {
     @Index()
     @Column({ type: 'varchar', length: 255, nullable: true })
     awsKey: string;
+
+    @Column({ type: 'real', nullable: true })
+    duration: number;
 }
