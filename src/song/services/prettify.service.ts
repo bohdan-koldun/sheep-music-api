@@ -1,7 +1,12 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import * as striptags from 'striptags';
+import { setMetadata } from '../../utils/mp3.file';
+import { downloadFileFromUrl } from '../../utils/axios.uploader';
 import { Song } from '../entities/song.entity';
+import { Attachment } from '../entities/attachment.entity';
+import * as mp3Duration from 'mp3-duration';
+import { FileAwsUploaderService } from '../../file-aws-uploader/file.aws.uploader';
 
 // tslint:disable-next-line:max-line-length
 const chordRegexp = /^[A-H][b\#]?(2|5|6|7|9|11|13|6\/9|7\-5|7\-9|7\#5|7\#9|7\+5|7\+9|7b5|7b9|7sus2|7sus4|sus4|add2|add4|add9|aug|dim|dim7|m\/maj7|m6|m7|m7b5|m9|m11|m13|maj7|maj9|maj11|maj13|mb5|m|sus|sus2|sus4|m7add11|add11|b5|-5|4)*(\/[A-H][b\#]*)*$/;
@@ -10,12 +15,15 @@ const chordRegexp = /^[A-H][b\#]?(2|5|6|7|9|11|13|6\/9|7\-5|7\-9|7\#5|7\#9|7\+5|
 export class PrettifyService {
 
     private readonly songRepo: Repository<Song>;
+    private readonly attachmentRepo: Repository<Attachment>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
         private readonly conection: Connection,
+        private readonly fileAwsUploader: FileAwsUploaderService,
     ) {
         this.songRepo = this.conection.getRepository(Song);
+        this.attachmentRepo = this.conection.getRepository(Attachment);
     }
 
     async prettifyChords() {
@@ -89,6 +97,54 @@ export class PrettifyService {
         } while (result && result.length);
 
         return 'successful normalized texts';
+    }
+
+    async normalizeSongsMp3Metadata() {
+        const limit = 2;
+        let result = [];
+        let page = 0;
+
+        do {
+                result = await this.songRepo
+                .createQueryBuilder('song')
+                .leftJoinAndSelect('song.audioMp3', 'audioMp3')
+                .leftJoinAndSelect('song.author', 'author')
+                .leftJoinAndSelect('song.album', 'album')
+                .where('song.audioMp3 IS NOT NULL')
+                .andWhere('audioMp3.duration IS NULL')
+                .take(limit)
+                .skip(page * limit)
+                .getMany();
+
+                await Promise.all(
+                result.map(
+                    async (song, index) => {
+                        const { audioMp3 } = song;
+                        if (audioMp3.path) {
+                            try {
+                                const buffer = await downloadFileFromUrl(encodeURI(audioMp3.path));
+
+                                audioMp3.duration = await mp3Duration(buffer);
+                                await this.attachmentRepo.save(audioMp3);
+
+                                const newBuffer = setMetadata(buffer, {
+                                    title: song.title + ' | sheep-music.com',
+                                    artist: song.author && song.author.title || undefined,
+                                    album: song.album && song.album.title || undefined,
+                                    commentText: 'Христианские песни | sheep-music.com',
+                                });
+                                await this.fileAwsUploader.uploadToS3(newBuffer, audioMp3.awsKey);
+                            } catch (error) {
+                                Logger.error(error.message);
+                            }
+                        }
+                    },
+                ),
+            );
+                page++;
+                Logger.log(limit * page + ' already uploaded mp3 with new metadata!');
+
+        } while (result && result.length);
     }
 
     normalizeText(text) {
