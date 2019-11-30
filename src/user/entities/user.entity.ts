@@ -5,6 +5,7 @@ import { Confirmation } from './confirmation.entity';
 import { RoleUser } from './role.user.entity';
 import { Song } from '../../song/entities/song.entity';
 import { Author } from '../../song/entities/author.entity';
+import { Album } from '../../song/entities/album.entity';
 
 @Entity('users')
 export class User {
@@ -49,6 +50,10 @@ export class User {
     @JoinTable()
     authors: Author[];
 
+    @ManyToMany(type => Album, album => album.users, { cascade: false })
+    @JoinTable()
+    albums: Album[];
+
     @BeforeInsert()
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10);
@@ -70,6 +75,7 @@ export class User {
             isEmailConfirmed,
             songs,
             authors,
+            albums,
         } = this;
 
         return {
@@ -83,6 +89,7 @@ export class User {
             isEmailConfirmed,
             songs,
             authors,
+            albums,
         };
     }
 }

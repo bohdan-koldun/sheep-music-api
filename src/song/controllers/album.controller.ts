@@ -9,11 +9,12 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { imageMulterilter } from '../../common/filters/multer.files.filter';
-import { Roles } from '../../common/decorators';
+import { Roles, GetUser } from '../../common/decorators';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AlbumService } from '../services';
 import { Pagination } from '../../pagination';
 import { AlbumDTO } from '../dto';
+import { User } from '../../user/entities';
 
 @Controller('albums')
 export class AlbumController {
@@ -65,8 +66,8 @@ export class AlbumController {
     }))
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'avatar', required: false })
-    async edit(@UploadedFile() avatar, @Body(new ValidationPipe()) album: AlbumDTO) {
-        return await this.albumService.editAlbum(album, avatar);
+    async edit(@UploadedFile() avatar, @Body(new ValidationPipe()) album: AlbumDTO, @GetUser() authUser: User) {
+        return await this.albumService.editAlbum(album, avatar, authUser);
     }
 
     @Post()
@@ -82,8 +83,8 @@ export class AlbumController {
     }))
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'avatar', required: false })
-    async add(@UploadedFile() avatar, @Body(new ValidationPipe()) album: AlbumDTO) {
-        return await this.albumService.addAlbum(album, avatar);
+    async add(@UploadedFile() avatar, @Body(new ValidationPipe()) album: AlbumDTO, @GetUser() authUser: User) {
+        return await this.albumService.addAlbum(album, avatar, authUser);
     }
 
 }

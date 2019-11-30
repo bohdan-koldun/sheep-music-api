@@ -2,6 +2,7 @@ import { IsEmail, IsOptional, Matches } from 'class-validator';
 import { RoleUser } from '../entities';
 import { Song } from '../../song/entities/song.entity';
 import { Author } from '../../song/entities/author.entity';
+import { Album } from '../../song/entities/album.entity';
 
 export class UserDTO {
     id?: number;
@@ -20,4 +21,5 @@ export class UserDTO {
     googleId?: string;
     songs?: Song[];
     authors?: Author[];
+    albums?: Album[];
 }

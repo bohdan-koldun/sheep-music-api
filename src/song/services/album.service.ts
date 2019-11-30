@@ -6,11 +6,13 @@ import { Author } from '../entities/author.entity';
 import { AlbumDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { AttachmentService } from './attachment.service';
+import { User } from '../../user/entities';
 
 @Injectable()
 export class AlbumService {
     private readonly albumRepo: Repository<Album>;
     private readonly authorRepo: Repository<Author>;
+    private readonly userRepo: Repository<User>;
     @Inject()
     private readonly attachmentService: AttachmentService;
 
@@ -20,6 +22,7 @@ export class AlbumService {
     ) {
         this.albumRepo = this.conection.getRepository(Album);
         this.authorRepo = this.conection.getRepository(Author);
+        this.userRepo = this.conection.getRepository(User);
     }
 
     async getBySlugOrId(identificator: string): Promise<AlbumDTO> {
@@ -33,7 +36,7 @@ export class AlbumService {
         });
     }
 
-    async editAlbum(album: AlbumDTO, avatar: Buffer): Promise<AlbumDTO> {
+    async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<AlbumDTO> {
         const oldData = await this.albumRepo.findOne({ id: album.id });
         if (!oldData) {
             throw new HttpException('Ошибка редактирования альбома!', HttpStatus.BAD_REQUEST);
@@ -55,10 +58,13 @@ export class AlbumService {
 
         delete album.slug;
         await this.albumRepo.update({ id: album.id }, { ...album });
+
+        await this.saveAlbumUserRelation(user, album as Album);
+
         return await this.getBySlugOrId(String(album.id));
     }
 
-    async addAlbum(album: AlbumDTO, avatar: Buffer): Promise<AlbumDTO> {
+    async addAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<AlbumDTO> {
         const slug = slugify(album.title);
 
         if (avatar) {
@@ -83,6 +89,8 @@ export class AlbumService {
                 slug: `${slugify(album.title)}${Date.now()}`,
             });
         }
+
+        await this.saveAlbumUserRelation(user, newAlbum);
 
         return await this.getBySlugOrId(String(newAlbum.id));
     }
@@ -140,5 +148,25 @@ export class AlbumService {
     async incrementLike(id: number) {
         await this.albumRepo
         .increment({ id }, 'likeCount', 1);
+    }
+
+    private async saveAlbumUserRelation(user: User, album: Album) {
+
+        if (album.id !== 0 && !album.id) { return; }
+
+        const userAlbums = await this.albumRepo
+            .createQueryBuilder('album')
+            .select('album.id')
+            .leftJoin('album.users', 'user')
+            .where('user.id = :id', { id: user.id })
+            .getMany();
+
+        const ids = new Set((userAlbums || []).map(item => item.id));
+
+        ids.add(Number(album.id));
+
+        user.albums = [...ids].map(id => ({ id } as Album));
+
+        await this.userRepo.save(user);
     }
 }
