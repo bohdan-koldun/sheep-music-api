@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert, OneToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { UserDTO } from '../dto/user.dto';
 import { Confirmation } from './confirmation.entity';
 import { RoleUser } from './role.user.entity';
+import { Song } from '../../song/entities/song.entity';
 
 @Entity('users')
 export class User {
@@ -39,6 +40,10 @@ export class User {
     @OneToMany(type => RoleUser, roleUser => roleUser.user)
     roles: RoleUser[];
 
+    @ManyToMany(type => Song, song => song.users, { cascade: false })
+    @JoinTable()
+    songs: Song[];
+
     @BeforeInsert()
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10);
@@ -58,6 +63,7 @@ export class User {
             googleId,
             roles,
             isEmailConfirmed,
+            songs,
         } = this;
 
         return {
@@ -69,6 +75,7 @@ export class User {
             googleId,
             roles,
             isEmailConfirmed,
+            songs,
         };
     }
 }

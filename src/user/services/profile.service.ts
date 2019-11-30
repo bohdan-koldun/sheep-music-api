@@ -21,6 +21,16 @@ export class ProfileService {
         this.confirmRepo = this.conection.getRepository(Confirmation);
     }
 
+    async getUserInfo(id: number): Promise<User> {
+        return await this.userRepo
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.roles', 'roles')
+            .leftJoinAndSelect('roles.role', 'role')
+            .loadRelationCountAndMap('user.songs', 'user.songs')
+            .where('user.id =:id', { id })
+            .getOne();
+    }
+
     async editUserInfo(data: UserDTO, id: number): Promise<{ user: User, confirm: Confirmation }> {
         const { name, email, phone } = data;
         let user = await this.userRepo.findOne({ id });

@@ -9,6 +9,7 @@ import { Album } from './album.entity';
 import { Author } from './author.entity';
 import { Tag } from './tag.entity';
 import { Translation } from './translation.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity('songs')
 export class Song {
@@ -73,6 +74,9 @@ export class Song {
     @ManyToMany(type => Translation, translation => translation.songs, { cascade: false })
     @JoinTable()
     translations: Translation[];
+
+    @ManyToMany(type => User, user => user.songs, { cascade: false })
+    users: User[];
 
     toResponseObject(): SongDTO {
         const {

@@ -1,5 +1,6 @@
 import { IsEmail, IsOptional, Matches } from 'class-validator';
 import { RoleUser } from '../entities';
+import { Song } from '../../song/entities/song.entity';
 
 export class UserDTO {
     id?: number;
@@ -16,4 +17,5 @@ export class UserDTO {
     passwordConfirmation?: string;
     facebookId?: string;
     googleId?: string;
+    songs?: Song[];
 }

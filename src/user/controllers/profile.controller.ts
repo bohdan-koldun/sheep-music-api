@@ -14,7 +14,10 @@ export class ProfileController {
 
     @Get()
     async show(@GetUser() authUser: User, @Res() res: Response) {
-        res.status(HttpStatus.OK).json(authUser.toResponseObject());
+        const { id } = authUser;
+        const user = await this.profileService.getUserInfo(id);
+
+        res.status(HttpStatus.OK).json(user.toResponseObject());
     }
 
     @Put()

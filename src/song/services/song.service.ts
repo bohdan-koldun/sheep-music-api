@@ -6,11 +6,13 @@ import { Tag } from '../entities/tag.entity';
 import { SongDTO, TagDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { PrettifyService } from './prettify.service';
+import { User } from '../../user/entities';
 
 @Injectable()
 export class SongService {
     private readonly songRepo: Repository<Song>;
     private readonly tagRepo: Repository<Tag>;
+    private readonly userRepo: Repository<User>;
     @Inject()
     private readonly prettifyService: PrettifyService;
 
@@ -20,6 +22,7 @@ export class SongService {
     ) {
         this.songRepo = this.conection.getRepository(Song);
         this.tagRepo = this.conection.getRepository(Tag);
+        this.userRepo = this.conection.getRepository(User);
     }
 
     async getBySlugOrId(identificator: string): Promise<SongDTO> {
@@ -34,7 +37,7 @@ export class SongService {
         return song ? song.toResponseObject() : null;
     }
 
-    async editSong(song: SongDTO): Promise<SongDTO> {
+    async editSong(song: SongDTO, userData: User): Promise<SongDTO> {
         if (!await this.songRepo.findOne({ id: song.id })) {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
         }
@@ -42,6 +45,16 @@ export class SongService {
         song.chords = this.prettifyService.normalizeText(song.chords);
         delete song.slug;
         await this.songRepo.update({ id: song.id }, song);
+
+        const currentUser = await this.userRepo.findOne(
+            { where: {id: userData.id},
+            relations: ['songs'],
+        });
+
+        currentUser.songs = [...currentUser.songs,  song as Song ];
+
+        await this.userRepo.save(currentUser);
+
         return await this.getBySlugOrId(String(song.id));
     }
 
