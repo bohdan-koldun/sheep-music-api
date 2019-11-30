@@ -37,23 +37,18 @@ export class SongService {
         return song ? song.toResponseObject() : null;
     }
 
-    async editSong(song: SongDTO, userData: User): Promise<SongDTO> {
+    async editSong(song: SongDTO, user: User): Promise<SongDTO> {
         if (!await this.songRepo.findOne({ id: song.id })) {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
         }
+
         song.text = this.prettifyService.normalizeText(song.text);
         song.chords = this.prettifyService.normalizeText(song.chords);
         delete song.slug;
+
         await this.songRepo.update({ id: song.id }, song);
 
-        const currentUser = await this.userRepo.findOne(
-            { where: {id: userData.id},
-            relations: ['songs'],
-        });
-
-        currentUser.songs = [...currentUser.songs,  song as Song ];
-
-        await this.userRepo.save(currentUser);
+        await this.saveSongUserRelation(user, song as Song);
 
         return await this.getBySlugOrId(String(song.id));
     }
@@ -153,5 +148,25 @@ export class SongService {
     async incrementLike(id: number) {
         await this.songRepo
         .increment({ id }, 'likeCount', 1);
+    }
+
+    private async saveSongUserRelation(user: User, song: Song) {
+
+        if (song.id !== 0 && !song.id) { return; }
+
+        const userSongs = await this.songRepo
+            .createQueryBuilder('song')
+            .select('song.id')
+            .leftJoin('song.users', 'user')
+            .where('user.id = :id', { id: user.id })
+            .getMany();
+
+        const ids = new Set((userSongs || []).map(item => item.id));
+
+        ids.add(Number(song.id));
+
+        user.songs = [...ids].map(id => ({ id } as Song));
+
+        await this.userRepo.save(user);
     }
 }
