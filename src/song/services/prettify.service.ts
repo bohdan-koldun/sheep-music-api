@@ -105,7 +105,7 @@ export class PrettifyService {
         let page = 0;
 
         do {
-                result = await this.songRepo
+            result = await this.songRepo
                 .createQueryBuilder('song')
                 .leftJoinAndSelect('song.audioMp3', 'audioMp3')
                 .leftJoinAndSelect('song.author', 'author')
@@ -116,7 +116,7 @@ export class PrettifyService {
                 .skip(page * limit)
                 .getMany();
 
-                await Promise.all(
+            await Promise.all(
                 result.map(
                     async (song, index) => {
                         const { audioMp3 } = song;
@@ -141,8 +141,8 @@ export class PrettifyService {
                     },
                 ),
             );
-                page++;
-                Logger.log(limit * page + ' already uploaded mp3 with new metadata!');
+            page++;
+            Logger.log(limit * page + ' already uploaded mp3 with new metadata!');
 
         } while (result && result.length);
     }
@@ -202,6 +202,8 @@ export class PrettifyService {
                 return result.push(`<span class="verse">7 verse:</span>`);
             } else if (/Verse:|VERSE:|Verse/g.test(line)) {
                 return result.push(`<span class="verse">Verse:</span>`);
+            } else if (/Концовка:|концовка:/g.test(line)) {
+                return result.push(`<span class="verse">Концовка:</span>`);
             } else if (/INSTRUMENTAL:|Instrumental:/g.test(line)) {
                 return result.push(`<span class="bridge">Instrumental:</span>`);
             } else if (/INTERLUDE:|Interlude:/g.test(line)) {
