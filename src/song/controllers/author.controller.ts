@@ -9,11 +9,12 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { imageMulterilter } from '../../common/filters/multer.files.filter';
-import { Roles } from '../../common/decorators';
+import { Roles, GetUser } from '../../common/decorators';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthorService } from '../services';
 import { Pagination } from '../../pagination';
 import { AuthorDTO } from '../dto';
+import { User } from '../../user/entities';
 
 @Controller('authors')
 export class AuthorController {
@@ -65,8 +66,8 @@ export class AuthorController {
     }))
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'avatar', required: false })
-    async edit(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO) {
-        return await this.authorService.editAuthor(author, avatar);
+    async edit(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO,  @GetUser() authUser: User) {
+        return await this.authorService.editAuthor(author, avatar, authUser);
     }
 
     @Post()
@@ -82,8 +83,8 @@ export class AuthorController {
     }))
     @ApiConsumes('multipart/form-data')
     @ApiImplicitFile({ name: 'avatar', required: false })
-    async add(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO) {
-        return await this.authorService.addAuthor(author, avatar);
+    async add(@UploadedFile() avatar, @Body(new ValidationPipe()) author: AuthorDTO,  @GetUser() authUser: User) {
+        return await this.authorService.addAuthor(author, avatar, authUser);
     }
 
 }

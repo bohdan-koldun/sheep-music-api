@@ -27,6 +27,7 @@ export class ProfileService {
             .leftJoinAndSelect('user.roles', 'roles')
             .leftJoinAndSelect('roles.role', 'role')
             .loadRelationCountAndMap('user.songs', 'user.songs')
+            .loadRelationCountAndMap('user.authors', 'user.authors')
             .where('user.id =:id', { id })
             .getOne();
     }

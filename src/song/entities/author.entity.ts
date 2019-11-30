@@ -1,7 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+    Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany,
+    CreateDateColumn, UpdateDateColumn, Index, ManyToMany,
+} from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
 import { Album } from './album.entity';
+import { User } from '../../user/entities';
 
 @Entity('authors')
 export class Author {
@@ -45,4 +49,7 @@ export class Author {
 
     @OneToMany(type => Album, album => album.author)
     albums: Album[];
+
+    @ManyToMany(type => User, user => user.authors, { cascade: false })
+    users: User[];
 }

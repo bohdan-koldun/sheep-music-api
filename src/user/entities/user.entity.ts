@@ -4,6 +4,7 @@ import { UserDTO } from '../dto/user.dto';
 import { Confirmation } from './confirmation.entity';
 import { RoleUser } from './role.user.entity';
 import { Song } from '../../song/entities/song.entity';
+import { Author } from '../../song/entities/author.entity';
 
 @Entity('users')
 export class User {
@@ -44,6 +45,10 @@ export class User {
     @JoinTable()
     songs: Song[];
 
+    @ManyToMany(type => Author, author => author.users, { cascade: false })
+    @JoinTable()
+    authors: Author[];
+
     @BeforeInsert()
     async hashPassword() {
         this.password = await bcrypt.hash(this.password, 10);
@@ -64,6 +69,7 @@ export class User {
             roles,
             isEmailConfirmed,
             songs,
+            authors,
         } = this;
 
         return {
@@ -76,6 +82,7 @@ export class User {
             roles,
             isEmailConfirmed,
             songs,
+            authors,
         };
     }
 }

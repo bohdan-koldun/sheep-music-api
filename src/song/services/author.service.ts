@@ -5,10 +5,12 @@ import { AuthorDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { Author } from '../entities/author.entity';
 import { AttachmentService } from './attachment.service';
+import { User } from '../../user/entities';
 
 @Injectable()
 export class AuthorService {
     private readonly authorRepo: Repository<Author>;
+    private readonly userRepo: Repository<User>;
     @Inject()
     private readonly attachmentService: AttachmentService;
 
@@ -17,6 +19,7 @@ export class AuthorService {
         private readonly conection: Connection,
     ) {
         this.authorRepo = this.conection.getRepository(Author);
+        this.userRepo = this.conection.getRepository(User);
     }
 
     async getBySlugOrId(identificator: string): Promise<AuthorDTO> {
@@ -36,7 +39,7 @@ export class AuthorService {
             .getOne();
     }
 
-    async editAuthor(author: AuthorDTO, avatar: Buffer): Promise<AuthorDTO> {
+    async editAuthor(author: AuthorDTO, avatar: Buffer, user: User): Promise<AuthorDTO> {
         const oldData = await this.authorRepo.findOne({ id: author.id });
         if (!oldData) {
             throw new HttpException('Ошибка редактирования автора!', HttpStatus.BAD_REQUEST);
@@ -54,10 +57,13 @@ export class AuthorService {
 
         delete author.slug;
         await this.authorRepo.update({ id: author.id }, { ...author });
+
+        await this.saveAuthorUserRelation(user, author as Author);
+
         return await this.getBySlugOrId(String(author.id));
     }
 
-    async addAuthor(author: AuthorDTO, avatar: Buffer): Promise<AuthorDTO> {
+    async addAuthor(author: AuthorDTO, avatar: Buffer, user: User): Promise<AuthorDTO> {
         const slug = slugify(author.title);
 
         if (avatar) {
@@ -68,15 +74,18 @@ export class AuthorService {
                     slug,
                 );
         }
+
         let newAuthor;
         try {
             newAuthor = await this.authorRepo.save({ ...author, slug });
         } catch (error) {
-            newAuthor =  await this.authorRepo.save({
+            newAuthor = await this.authorRepo.save({
                 ...author,
                 slug: `${slugify(author.title)}${Date.now()}`,
             });
         }
+
+        await this.saveAuthorUserRelation(user, newAuthor);
 
         return await this.getBySlugOrId(String(newAuthor.id));
     }
@@ -108,7 +117,7 @@ export class AuthorService {
     }
 
     async getIdTitleList() {
-        return await this.authorRepo.find({select: ['id', 'title']});
+        return await this.authorRepo.find({ select: ['id', 'title'] });
     }
 
     private generateOrderFilter(filter: string): any {
@@ -129,11 +138,31 @@ export class AuthorService {
 
     async incrementView(id: number) {
         await this.authorRepo
-        .increment({ id }, 'viewCount', 1);
+            .increment({ id }, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.authorRepo
-        .increment({ id }, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
+    }
+
+    private async saveAuthorUserRelation(user: User, author: Author) {
+
+        if (author.id !== 0 && !author.id) { return; }
+
+        const userAuthors = await this.authorRepo
+            .createQueryBuilder('author')
+            .select('author.id')
+            .leftJoin('author.users', 'user')
+            .where('user.id = :id', { id: user.id })
+            .getMany();
+
+        const ids = new Set((userAuthors || []).map(item => item.id));
+
+        ids.add(Number(author.id));
+
+        user.authors = [...ids].map(id => ({ id } as Author));
+
+        await this.userRepo.save(user);
     }
 }
