@@ -162,6 +162,8 @@ export class PrettifyService {
                 return result.push(`<span class="chorus">Проигрыш:</span>`);
             } else if (/ВСТАВКА:|Вставка:/g.test(line)) {
                 return result.push(`<span class="chorus">Вставка:</span>`);
+            } else if (/Intro:|INTRO:/g.test(line)) {
+                return result.push(`<span class="chorus">Intro:</span>`);
             } else if (/Пред припев:|Пред-припев:/g.test(line)) {
                 return result.push(`<span class="chorus">Пред припев:</span>`);
             } else if (/Pre chorus:|PRE CHORUS:/g.test(line)) {
