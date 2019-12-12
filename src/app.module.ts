@@ -13,6 +13,7 @@ import { MailModule } from './mail/mail.module';
 import { AuthModule } from './auth/auth.module';
 import { FileAwsUploaderModule } from './file-aws-uploader/file.aws.uploader.module';
 import { DatabaseChangesScheduleService } from './schedule/schedule.service';
+import { ParserModule } from './parser/parser.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DatabaseChangesScheduleService } from './schedule/schedule.service';
     AuthModule,
     FileAwsUploaderModule,
     ScheduleModule.register({}),
+    ParserModule,
   ],
   controllers: [AppController],
   providers: [

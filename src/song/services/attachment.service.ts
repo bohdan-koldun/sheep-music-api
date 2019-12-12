@@ -44,4 +44,13 @@ export class AttachmentService {
         if (newAtttachment && attachment) { this.fileAwsUploader.deleteFromOceanSpaces(attachment.awsKey); }
         return newAtttachment;
     }
+
+    async removeAttachment(attachment: Attachment) {
+        if (attachment) {
+            this.fileAwsUploader.deleteFromOceanSpaces(attachment.awsKey);
+
+            await this.atachmentRepo.remove(attachment);
+        }
+
+    }
 }
