@@ -31,6 +31,7 @@ export class AuthorService {
             .leftJoinAndSelect('songs.album', 'album')
             .leftJoinAndSelect('songs.audioMp3', 'audioMp3')
             .leftJoinAndSelect('songs.author', 'songAuthor')
+            .leftJoinAndSelect('songAuthor.thumbnail', 'authorThumbnail')
             .leftJoinAndSelect('author.albums', 'albums')
             .leftJoinAndSelect('albums.thumbnail', 'albumsThumbnail')
             .loadRelationCountAndMap('albums.songs', 'albums.songs')

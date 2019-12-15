@@ -61,9 +61,10 @@ export class SongService {
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
             .leftJoinAndSelect('song.author', 'author')
+            .leftJoinAndSelect('author.thumbnail', 'authorThumbnail')
             .leftJoinAndSelect('song.album', 'album')
             .leftJoinAndSelect('song.tags', 'tags')
-            .leftJoinAndSelect('album.thumbnail', 'thumbnail')
+            .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
 
         if (tags && tags !== 'null') {
