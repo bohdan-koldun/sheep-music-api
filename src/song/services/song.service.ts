@@ -26,7 +26,7 @@ export class SongService {
     }
 
     async getBySlugOrId(identificator: string): Promise<SongDTO> {
-        const id = parseInt(identificator, 10);
+        const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         const song = await this.songRepo.findOne({
             where: [
                 { id: id ? id : null },

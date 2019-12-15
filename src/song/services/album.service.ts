@@ -26,7 +26,7 @@ export class AlbumService {
     }
 
     async getBySlugOrId(identificator: string): Promise<AlbumDTO> {
-        const id = parseInt(identificator, 10);
+        const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         return await this.albumRepo.findOne({
             where: [
                 { id: id ? id : null },

@@ -23,7 +23,8 @@ export class AuthorService {
     }
 
     async getBySlugOrId(identificator: string): Promise<AuthorDTO> {
-        const id = parseInt(identificator, 10);
+        const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
+
         return await this.authorRepo
             .createQueryBuilder('author')
             .leftJoinAndSelect('author.songs', 'songs')
@@ -34,8 +35,8 @@ export class AuthorService {
             .leftJoinAndSelect('albums.thumbnail', 'albumsThumbnail')
             .loadRelationCountAndMap('albums.songs', 'albums.songs')
             .leftJoinAndSelect('author.thumbnail', 'thumbnail')
-            .where('author.slug=:slug', { slug: identificator })
-            .orWhere('author.id=:id', { id: id ? id : null })
+            .where('author.slug=:slug', { slug: `${identificator}` })
+            .orWhere('author.id=:id', { id })
             .getOne();
     }
 
