@@ -59,12 +59,17 @@ export class SongService {
         const { keyword, limit, page, filter, tags } = options;
         const query = this.songRepo
             .createQueryBuilder('song')
-            .leftJoinAndSelect('song.audioMp3', 'audioMp3')
-            .leftJoinAndSelect('song.author', 'author')
-            .leftJoinAndSelect('author.thumbnail', 'authorThumbnail')
-            .leftJoinAndSelect('song.album', 'album')
-            .leftJoinAndSelect('song.tags', 'tags')
-            .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
+            .leftJoin('song.audioMp3', 'audioMp3')
+            .leftJoin('song.author', 'author')
+            .leftJoin('author.thumbnail', 'authorThumbnail')
+            .leftJoin('song.album', 'album')
+            .leftJoin('song.tags', 'tags')
+            .leftJoin('album.thumbnail', 'albumThumbnail')
+            .select([
+                'song.slug', 'song.id', 'song.title',  'song.video', 'song.likeCount', 'song.viewCount',
+                'audioMp3', 'album', 'authorThumbnail',
+                'author', 'albumThumbnail',
+            ])
             .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
 
         if (tags && tags !== 'null') {
@@ -143,12 +148,12 @@ export class SongService {
 
     async incrementView(id: number) {
         await this.songRepo
-        .increment({ id }, 'viewCount', 1);
+            .increment({ id }, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.songRepo
-        .increment({ id }, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
     }
 
     private async saveSongUserRelation(user: User, song: Song) {
