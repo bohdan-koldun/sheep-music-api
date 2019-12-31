@@ -7,6 +7,7 @@ import {
     VideoService,
     AttachmentService,
     TagsService,
+    StatisticService,
 } from './services';
 
 export const songProviders = [
@@ -18,4 +19,5 @@ export const songProviders = [
     VideoService,
     AttachmentService,
     TagsService,
+    StatisticService,
 ];

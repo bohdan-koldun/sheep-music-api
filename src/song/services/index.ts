@@ -6,6 +6,7 @@ import { AuthorService } from './author.service';
 import { VideoService } from './video.service';
 import { AttachmentService } from './attachment.service';
 import { TagsService } from './tags.service';
+import { StatisticService } from './statistic.service';
 
 export {
     SongParserService,
@@ -16,4 +17,5 @@ export {
     VideoService,
     AttachmentService,
     TagsService,
+    StatisticService,
 };

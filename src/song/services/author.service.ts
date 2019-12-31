@@ -107,7 +107,7 @@ export class AuthorService {
             .skip(page * limit)
             .take(limit)
             .where('LOWER(author.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
-            .orderBy({ ...this.generateOrderFilter(filter) })
+            .orderBy({ ...AuthorService.generateOrderFilter(filter) })
             .getManyAndCount();
 
         return new Pagination<AuthorDTO>({
@@ -122,20 +122,21 @@ export class AuthorService {
         return await this.authorRepo.find({ select: ['id', 'title'] });
     }
 
-    private generateOrderFilter(filter: string): any {
-        const order = {};
-        if (filter === 'revert_alphabet') {
-            order['author.title'] = 'DESC';
+    static generateOrderFilter(filter: string): any {
+        switch (filter) {
+            case 'revert_alphabet':
+                return { 'author.title': 'DESC' };
+            case 'alphabet':
+                return { 'author.title': 'ASC' };
+            case 'newest':
+                return { 'author.createdAt': 'ASC' };
+            case 'popular':
+                return { 'author.viewCount': 'DESC' };
+            case 'favorite':
+                return { 'author.favorite': 'DESC' };
+            default:
+                return { 'author.createdAt': 'ASC' };
         }
-
-        if (filter === 'alphabet') {
-            order['author.title'] = 'ASC';
-        }
-        if (filter === 'newest') {
-            order['author.createdAt'] = 'ASC';
-        }
-
-        return order;
     }
 
     async incrementView(id: number) {

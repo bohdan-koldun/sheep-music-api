@@ -5,6 +5,7 @@ import {
     AlbumController,
     AuthorController,
     VideoController,
+    StatisticController,
 } from './controllers';
 
 @Global()
@@ -14,6 +15,7 @@ import {
         AlbumController,
         AuthorController,
         VideoController,
+        StatisticController,
     ],
     providers: [
         ...songProviders,

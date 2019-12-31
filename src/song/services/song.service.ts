@@ -72,7 +72,7 @@ export class SongService {
         }
 
         const [results, total] = await query
-            .orderBy({ ...this.generateOrderFilter(filter) })
+            .orderBy({ ...SongService.generateOrderFilter(filter) })
             .take(limit)
             .skip(limit * page)
             .getManyAndCount();
@@ -85,20 +85,22 @@ export class SongService {
         });
     }
 
-    private generateOrderFilter(filter: string): any {
-        const order = {};
-        if (filter === 'revert_alphabet') {
-            order['song.title'] = 'DESC';
-        }
+    static generateOrderFilter(filter: string): any {
 
-        if (filter === 'alphabet') {
-            order['song.title'] = 'ASC';
+        switch (filter) {
+            case 'revert_alphabet':
+                return { 'song.title': 'DESC' };
+            case 'alphabet':
+                return { 'song.title': 'ASC' };
+            case 'newest':
+                return { 'song.createdAt': 'ASC' };
+            case 'popular':
+                return { 'song.viewCount': 'DESC' };
+            case 'favorite':
+                return { 'song.favorite': 'DESC' };
+            default:
+                return { 'song.createdAt': 'ASC' };
         }
-        if (filter === 'newest') {
-            order['song.createdAt'] = 'ASC';
-        }
-
-        return order;
     }
 
     async changeSlugs() {
@@ -143,12 +145,12 @@ export class SongService {
 
     async incrementView(id: number) {
         await this.songRepo
-        .increment({ id }, 'viewCount', 1);
+            .increment({ id }, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.songRepo
-        .increment({ id }, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
     }
 
     private async saveSongUserRelation(user: User, song: Song) {

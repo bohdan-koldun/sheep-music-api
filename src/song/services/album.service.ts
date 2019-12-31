@@ -109,7 +109,7 @@ export class AlbumService {
             .skip(page * limit)
             .take(limit)
             .where('LOWER(album.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
-            .orderBy({ ...this.generateOrderFilter(filter) })
+            .orderBy({ ...AlbumService.generateOrderFilter(filter) })
             .getManyAndCount();
 
         return new Pagination<AlbumDTO>({
@@ -124,30 +124,31 @@ export class AlbumService {
         return await this.albumRepo.find({ select: ['id', 'title'] });
     }
 
-    private generateOrderFilter(filter: string): any {
-        const order = {};
-        if (filter === 'revert_alphabet') {
-            order['album.title'] = 'DESC';
+    static generateOrderFilter(filter: string): any {
+        switch (filter) {
+            case 'revert_alphabet':
+                return { 'album.title': 'DESC' };
+            case 'alphabet':
+                return { 'album.title': 'ASC' };
+            case 'newest':
+                return { 'album.createdAt': 'ASC' };
+            case 'popular':
+                return { 'album.viewCount': 'DESC' };
+            case 'favorite':
+                return { 'album.favorite': 'DESC' };
+            default:
+                return { 'album.createdAt': 'ASC' };
         }
-
-        if (filter === 'alphabet') {
-            order['album.title'] = 'ASC';
-        }
-        if (filter === 'newest') {
-            order['album.createdAt'] = 'ASC';
-        }
-
-        return order;
     }
 
     async incrementView(id: number) {
         await this.albumRepo
-        .increment({ id }, 'viewCount', 1);
+            .increment({ id }, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.albumRepo
-        .increment({ id }, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
     }
 
     private async saveAlbumUserRelation(user: User, album: Album) {
