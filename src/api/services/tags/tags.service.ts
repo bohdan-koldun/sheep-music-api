@@ -1,9 +1,9 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { slugify } from 'transliteration';
-import { Song } from '../entities/song.entity';
-import { Tag } from '../entities/tag.entity';
-import { TagDTO } from '../dto';
+import { Song } from '../../entities/song.entity';
+import { Tag } from '../../entities/tag.entity';
+import { TagDTO } from '../../dto';
 
 @Injectable()
 export class TagsService {

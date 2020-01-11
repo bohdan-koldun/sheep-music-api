@@ -1,5 +1,5 @@
 import { Module, Global, CacheInterceptor, CacheModule } from '@nestjs/common';
-import { songProviders } from './song.providers';
+import { apiProviders } from './api.providers';
 import {
     SongController,
     AlbumController,
@@ -22,15 +22,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 
     ],
     providers: [
-        ...songProviders,
+        ...apiProviders,
         {
             provide: APP_INTERCEPTOR,
             useClass: CacheInterceptor,
         },
     ],
     exports: [
-        ...songProviders,
+        ...apiProviders,
     ],
 })
 
-export class SongModule { }
+export class ApiModule { }

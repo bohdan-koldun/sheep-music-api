@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
-import { Song } from '../entities/song.entity';
-import { SongDTO } from '../dto';
-import { PaginationOptionsInterface, Pagination } from '../../pagination';
-import {generateOrderFilter} from '../../utils/filter';
+import { Song } from '../../entities/song.entity';
+import { SongDTO } from '../../dto';
+import { PaginationOptionsInterface, Pagination } from '../../../pagination';
+import {generateOrderFilter} from '../../../utils/filter';
 
 @Injectable()
 export class VideoService {

@@ -6,7 +6,7 @@ import {
     OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Logger, Inject } from '@nestjs/common';
-import { SongParserService } from '../song/services';
+import { SongParserService } from '../api/services';
 
 @WebSocketGateway()
 export class ParserGateway implements OnGatewayConnection, OnGatewayDisconnect {

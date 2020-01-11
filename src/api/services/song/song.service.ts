@@ -1,13 +1,13 @@
 import {Injectable, Inject, Logger, HttpException, HttpStatus} from '@nestjs/common';
 import {Connection, Repository} from 'typeorm';
 import {slugify} from 'transliteration';
-import {Song} from '../entities/song.entity';
-import {Tag} from '../entities/tag.entity';
-import {SongDTO, TagDTO} from '../dto';
-import {PaginationOptionsInterface, Pagination} from '../../pagination';
-import {PrettifyService} from './prettify.service';
-import {User} from '../../user/entities';
-import {generateOrderFilter} from '../../utils/filter';
+import {Song} from '../../entities/song.entity';
+import {Tag} from '../../entities/tag.entity';
+import {SongDTO, TagDTO} from '../../dto';
+import {PaginationOptionsInterface, Pagination} from '../../../pagination';
+import {PrettifyService} from '../prettify/prettify.service';
+import {User} from '../../../user/entities';
+import {generateOrderFilter} from '../../../utils/filter';
 
 @Injectable()
 export class SongService {

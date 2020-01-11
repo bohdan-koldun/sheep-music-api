@@ -6,7 +6,7 @@ import * as path from 'path';
 import { AppController } from './app.controller';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
-import { SongModule } from './song/song.module';
+import { ApiModule } from './api/api.module';
 import { HttpErrorFilter } from './common/filters/http-error.filter';
 import { SocketModule } from './socket/socket.module';
 import { MailModule } from './mail/mail.module';
@@ -20,7 +20,7 @@ import { ParserModule } from './parser/parser.module';
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     DatabaseModule,
     UserModule,
-    SongModule,
+    ApiModule,
     SocketModule,
     MailModule,
     AuthModule,

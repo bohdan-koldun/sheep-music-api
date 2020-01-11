@@ -1,13 +1,13 @@
 import {Injectable, Inject, HttpException, HttpStatus} from '@nestjs/common';
 import {Connection, Repository} from 'typeorm';
 import {slugify} from 'transliteration';
-import {Album} from '../entities/album.entity';
-import {Author} from '../entities/author.entity';
-import {AlbumDTO} from '../dto';
-import {PaginationOptionsInterface, Pagination} from '../../pagination';
-import {AttachmentService} from './attachment.service';
-import {User} from '../../user/entities';
-import {generateOrderFilter} from '../../utils/filter';
+import {Album} from '../../entities/album.entity';
+import {Author} from '../../entities/author.entity';
+import {AlbumDTO} from '../../dto';
+import {PaginationOptionsInterface, Pagination} from '../../../pagination';
+import {AttachmentService} from '../attachment/attachment.service';
+import {User} from '../../../user/entities';
+import {generateOrderFilter} from '../../../utils/filter';
 
 @Injectable()
 export class AlbumService {

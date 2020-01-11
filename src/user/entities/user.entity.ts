@@ -3,9 +3,9 @@ import * as bcrypt from 'bcryptjs';
 import { UserDTO } from '../dto/user.dto';
 import { Confirmation } from './confirmation.entity';
 import { RoleUser } from './role.user.entity';
-import { Song } from '../../song/entities/song.entity';
-import { Author } from '../../song/entities/author.entity';
-import { Album } from '../../song/entities/album.entity';
+import { Song } from '../../api/entities/song.entity';
+import { Author } from '../../api/entities/author.entity';
+import { Album } from '../../api/entities/album.entity';
 
 @Entity('users')
 export class User {

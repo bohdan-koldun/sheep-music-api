@@ -10,7 +10,7 @@ import {
     StatisticService,
 } from './services';
 
-export const songProviders = [
+export const apiProviders = [
     SongParserService,
     SongService,
     PrettifyService,

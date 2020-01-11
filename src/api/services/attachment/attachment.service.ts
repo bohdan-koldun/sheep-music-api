@@ -1,8 +1,8 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import * as sharp from 'sharp';
-import { Attachment } from '../entities/attachment.entity';
-import { FileAwsUploaderService } from '../../file-aws-uploader/file.aws.uploader';
+import { Attachment } from '../../entities/attachment.entity';
+import { FileAwsUploaderService } from '../../../file-aws-uploader/file.aws.uploader';
 
 @Injectable()
 export class AttachmentService {

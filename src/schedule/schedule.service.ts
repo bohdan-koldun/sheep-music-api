@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Inject, Logger } from '@nestjs/common';
 import { Schedule, InjectSchedule } from 'nest-schedule';
-import { TagsService } from '../song/services';
+import { TagsService } from '../api/services';
 
 @Injectable()
 export class DatabaseChangesScheduleService implements OnModuleInit {

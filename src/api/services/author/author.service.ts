@@ -1,12 +1,12 @@
 import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { slugify } from 'transliteration';
-import { AuthorDTO } from '../dto';
-import { PaginationOptionsInterface, Pagination } from '../../pagination';
-import { Author } from '../entities/author.entity';
-import { AttachmentService } from './attachment.service';
-import { User } from '../../user/entities';
-import {generateOrderFilter} from '../../utils/filter';
+import { AuthorDTO } from '../../dto';
+import { PaginationOptionsInterface, Pagination } from '../../../pagination';
+import { Author } from '../../entities/author.entity';
+import { AttachmentService } from '../attachment/attachment.service';
+import { User } from '../../../user/entities';
+import {generateOrderFilter} from '../../../utils/filter';
 
 @Injectable()
 export class AuthorService {

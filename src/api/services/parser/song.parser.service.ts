@@ -1,12 +1,12 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { slugify } from 'transliteration';
-import { Song } from '../entities/song.entity';
-import { Album } from '../entities/album.entity';
-import { Author } from '../entities/author.entity';
-import { Attachment } from '../entities/attachment.entity';
-import { Tag } from '../entities/tag.entity';
-import { Translation } from '../entities/translation.entity';
+import { Song } from '../../entities/song.entity';
+import { Album } from '../../entities/album.entity';
+import { Author } from '../../entities/author.entity';
+import { Attachment } from '../../entities/attachment.entity';
+import { Tag } from '../../entities/tag.entity';
+import { Translation } from '../../entities/translation.entity';
 
 @Injectable()
 export class SongParserService {
@@ -172,7 +172,7 @@ export class SongParserService {
     async saveTags(tags: string[]): Promise<Tag[]> {
         if (!tags || !tags.length) { return null; }
 
-        return await await Promise.all(
+        return await Promise.all(
             tags.map(async (item) => {
                 const tag = await this.conection
                     .getRepository(Tag)

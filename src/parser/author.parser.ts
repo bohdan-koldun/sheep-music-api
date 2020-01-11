@@ -1,8 +1,8 @@
 import { Injectable, Inject, OnModuleInit, Logger } from '@nestjs/common';
 import { Repository, Connection } from 'typeorm';
 import * as cheerio from 'cheerio';
-import { AttachmentService } from '../song/services';
-import { Author } from '../song/entities/author.entity';
+import { AttachmentService } from '../api/services';
+import { Author } from '../api/entities/author.entity';
 import { getUrlHtml, downloadFileFromUrl } from '../utils/axios.uploader';
 
 @Injectable()

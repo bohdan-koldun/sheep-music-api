@@ -1,11 +1,9 @@
 import {Injectable, Inject} from '@nestjs/common';
 import {Connection, Repository} from 'typeorm';
-import {Song} from '../entities/song.entity';
-import {Album} from '../entities/album.entity';
-import {Author} from '../entities/author.entity';
-import {AlbumService} from './album.service';
-import {AuthorService} from './author.service';
-import {generateOrderFilter} from '../../utils/filter';
+import {Song} from '../../entities/song.entity';
+import {Album} from '../../entities/album.entity';
+import {Author} from '../../entities/author.entity';
+import {generateOrderFilter} from '../../../utils/filter';
 
 @Injectable()
 export class StatisticService {
