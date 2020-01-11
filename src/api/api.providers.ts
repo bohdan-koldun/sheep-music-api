@@ -8,11 +8,13 @@ import {
     AttachmentService,
     TagsService,
     StatisticService,
+    SongAddService,
 } from './services';
 
 export const apiProviders = [
     SongParserService,
     SongService,
+    SongAddService,
     PrettifyService,
     AlbumService,
     AuthorService,

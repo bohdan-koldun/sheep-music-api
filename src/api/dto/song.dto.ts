@@ -8,6 +8,7 @@ export class SongDTO {
     @IsOptional()
     id: number;
 
+    @IsOptional()
     @MinLength(2)
     slug: string;
 

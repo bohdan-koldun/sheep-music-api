@@ -1,7 +1,7 @@
-import { Controller, Inject, Get, Request, Param, UseGuards, Body, Put, HttpCode } from '@nestjs/common';
+import {Controller, Inject, Get, Request, Param, UseGuards, Body, Put, HttpCode, Post} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles, GetUser } from '../../common/decorators';
-import { SongService, PrettifyService, TagsService } from '../services';
+import {SongService, PrettifyService, TagsService, SongAddService} from '../services';
 import { Pagination } from '../../pagination';
 import { SongDTO, TagDTO } from '../dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -12,6 +12,8 @@ import { User } from '../../user/entities';
 export class SongController {
     @Inject()
     private readonly songService: SongService;
+    @Inject()
+    private readonly songAddService: SongAddService;
     @Inject()
     private readonly tagsService: TagsService;
     @Inject()
@@ -56,6 +58,14 @@ export class SongController {
     @UseGuards(AuthGuard('jwt'))
     async edit(@Body(new ValidationPipe()) song: SongDTO, @GetUser() authUser: User) {
         return await this.songService.editSong(song, authUser);
+    }
+
+    @Post()
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'moderator')
+    @UseGuards(AuthGuard('jwt'))
+    async create(@Body(new ValidationPipe()) song: SongDTO, @GetUser() authUser: User) {
+        return await this.songAddService.create(song, authUser);
     }
 
     @Get('prettify/chords')
