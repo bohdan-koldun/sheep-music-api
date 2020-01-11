@@ -3,6 +3,7 @@ import { Connection, Repository } from 'typeorm';
 import { Song } from '../entities/song.entity';
 import { SongDTO } from '../dto';
 import { PaginationOptionsInterface, Pagination } from '../../pagination';
+import {generateOrderFilter} from '../../utils/filter';
 
 @Injectable()
 export class VideoService {
@@ -39,7 +40,7 @@ export class VideoService {
             .andWhere('song.video is not null')
             .andWhere('song.video is not null')
             .andWhere('song.video != :video', { video: '' })
-            .orderBy({ ...this.generateOrderFilter(filter) })
+            .orderBy({ ...generateOrderFilter(filter, 'song') })
             .take(limit)
             .skip(limit * page)
             .getManyAndCount();
@@ -50,21 +51,5 @@ export class VideoService {
             countPages: Math.ceil(total / limit),
             results: results.map(song => song.toResponseObject()) as unknown as SongDTO[],
         });
-    }
-
-    private generateOrderFilter(filter: string): any {
-        const order = {};
-        if (filter === 'revert_alphabet') {
-            order['song.title'] = 'DESC';
-        }
-
-        if (filter === 'alphabet') {
-            order['song.title'] = 'ASC';
-        }
-        if (filter === 'newest') {
-            order['song.createdAt'] = 'ASC';
-        }
-
-        return order;
     }
 }

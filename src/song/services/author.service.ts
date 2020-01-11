@@ -6,6 +6,7 @@ import { PaginationOptionsInterface, Pagination } from '../../pagination';
 import { Author } from '../entities/author.entity';
 import { AttachmentService } from './attachment.service';
 import { User } from '../../user/entities';
+import {generateOrderFilter} from '../../utils/filter';
 
 @Injectable()
 export class AuthorService {
@@ -107,7 +108,7 @@ export class AuthorService {
             .skip(page * limit)
             .take(limit)
             .where('LOWER(author.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
-            .orderBy({ ...AuthorService.generateOrderFilter(filter) })
+            .orderBy({ ...generateOrderFilter(filter, 'author') })
             .getManyAndCount();
 
         return new Pagination<AuthorDTO>({
@@ -120,23 +121,6 @@ export class AuthorService {
 
     async getIdTitleList() {
         return await this.authorRepo.find({ select: ['id', 'title'] });
-    }
-
-    static generateOrderFilter(filter: string): any {
-        switch (filter) {
-            case 'revert_alphabet':
-                return { 'author.title': 'DESC' };
-            case 'alphabet':
-                return { 'author.title': 'ASC' };
-            case 'newest':
-                return { 'author.createdAt': 'ASC' };
-            case 'popular':
-                return { 'author.viewCount': 'DESC' };
-            case 'favorite':
-                return { 'author.favorite': 'DESC' };
-            default:
-                return { 'author.createdAt': 'ASC' };
-        }
     }
 
     async incrementView(id: number) {

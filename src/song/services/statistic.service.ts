@@ -1,11 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { Connection, Repository } from 'typeorm';
-import { Song } from '../entities/song.entity';
-import { Album } from '../entities/album.entity';
-import { Author } from '../entities/author.entity';
-import { SongService } from './song.service';
-import { AlbumService } from './album.service';
-import { AuthorService } from './author.service';
+import {Injectable, Inject} from '@nestjs/common';
+import {Connection, Repository} from 'typeorm';
+import {Song} from '../entities/song.entity';
+import {Album} from '../entities/album.entity';
+import {Author} from '../entities/author.entity';
+import {AlbumService} from './album.service';
+import {AuthorService} from './author.service';
+import {generateOrderFilter} from '../../utils/filter';
 
 @Injectable()
 export class StatisticService {
@@ -31,7 +31,7 @@ export class StatisticService {
             .leftJoinAndSelect('song.album', 'album')
             .leftJoinAndSelect('song.tags', 'tags')
             .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
-            .orderBy({ ...SongService.generateOrderFilter(filter) })
+            .orderBy({...generateOrderFilter(filter, 'song')})
             .take(count)
             .getMany();
 
@@ -42,7 +42,7 @@ export class StatisticService {
             .loadRelationCountAndMap('album.songs', 'album.songs')
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .take(count)
-            .orderBy({ ...AlbumService.generateOrderFilter(filter) })
+            .orderBy({...generateOrderFilter(filter, 'album')})
             .getMany();
 
         const authors = await this.authorRepo
@@ -53,7 +53,7 @@ export class StatisticService {
             .loadRelationCountAndMap('author.albums', 'author.albums')
             .leftJoinAndSelect('author.thumbnail', 'thumbnail')
             .take(count)
-            .orderBy({ ...AuthorService.generateOrderFilter(filter) })
+            .orderBy({...generateOrderFilter(filter, 'author')})
             .getMany();
 
         return {

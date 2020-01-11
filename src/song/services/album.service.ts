@@ -1,12 +1,13 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { Connection, Repository } from 'typeorm';
-import { slugify } from 'transliteration';
-import { Album } from '../entities/album.entity';
-import { Author } from '../entities/author.entity';
-import { AlbumDTO } from '../dto';
-import { PaginationOptionsInterface, Pagination } from '../../pagination';
-import { AttachmentService } from './attachment.service';
-import { User } from '../../user/entities';
+import {Injectable, Inject, HttpException, HttpStatus} from '@nestjs/common';
+import {Connection, Repository} from 'typeorm';
+import {slugify} from 'transliteration';
+import {Album} from '../entities/album.entity';
+import {Author} from '../entities/author.entity';
+import {AlbumDTO} from '../dto';
+import {PaginationOptionsInterface, Pagination} from '../../pagination';
+import {AttachmentService} from './attachment.service';
+import {User} from '../../user/entities';
+import {generateOrderFilter} from '../../utils/filter';
 
 @Injectable()
 export class AlbumService {
@@ -29,15 +30,15 @@ export class AlbumService {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         return await this.albumRepo.findOne({
             where: [
-                { id: id ? id : null },
-                { slug: identificator },
+                {id: id ? id : null},
+                {slug: identificator},
             ],
             relations: ['songs', 'author'],
         });
     }
 
     async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<AlbumDTO> {
-        const oldData = await this.albumRepo.findOne({ id: album.id });
+        const oldData = await this.albumRepo.findOne({id: album.id});
         if (!oldData) {
             throw new HttpException('Ошибка редактирования альбома!', HttpStatus.BAD_REQUEST);
         }
@@ -52,12 +53,12 @@ export class AlbumService {
                 );
         }
 
-        if (!await this.authorRepo.findOne({ id: Number(album.author) || null })) {
+        if (!await this.authorRepo.findOne({id: Number(album.author) || null})) {
             delete album.author;
         }
 
         delete album.slug;
-        await this.albumRepo.update({ id: album.id }, { ...album });
+        await this.albumRepo.update({id: album.id}, {...album});
 
         await this.saveAlbumUserRelation(user, album as Album);
 
@@ -76,13 +77,13 @@ export class AlbumService {
                 );
         }
 
-        if (!await this.authorRepo.findOne({ id: Number(album.author) || null })) {
+        if (!await this.authorRepo.findOne({id: Number(album.author) || null})) {
             delete album.author;
         }
 
         let newAlbum;
         try {
-            newAlbum = await this.albumRepo.save({ ...album, slug });
+            newAlbum = await this.albumRepo.save({...album, slug});
         } catch (error) {
             newAlbum = await this.albumRepo.save({
                 ...album,
@@ -98,7 +99,7 @@ export class AlbumService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AlbumDTO>> {
-        const { keyword, limit, page, filter } = options;
+        const {keyword, limit, page, filter} = options;
 
         const [results, total] = await this.albumRepo
             .createQueryBuilder('album')
@@ -108,8 +109,8 @@ export class AlbumService {
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .skip(page * limit)
             .take(limit)
-            .where('LOWER(album.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
-            .orderBy({ ...AlbumService.generateOrderFilter(filter) })
+            .where('LOWER(album.title) like :title', {title: '%' + keyword.toLowerCase() + '%'})
+            .orderBy({...generateOrderFilter(filter, 'album')})
             .getManyAndCount();
 
         return new Pagination<AlbumDTO>({
@@ -121,52 +122,37 @@ export class AlbumService {
     }
 
     async getIdTitleList() {
-        return await this.albumRepo.find({ select: ['id', 'title'] });
-    }
-
-    static generateOrderFilter(filter: string): any {
-        switch (filter) {
-            case 'revert_alphabet':
-                return { 'album.title': 'DESC' };
-            case 'alphabet':
-                return { 'album.title': 'ASC' };
-            case 'newest':
-                return { 'album.createdAt': 'ASC' };
-            case 'popular':
-                return { 'album.viewCount': 'DESC' };
-            case 'favorite':
-                return { 'album.favorite': 'DESC' };
-            default:
-                return { 'album.createdAt': 'ASC' };
-        }
+        return await this.albumRepo.find({select: ['id', 'title']});
     }
 
     async incrementView(id: number) {
         await this.albumRepo
-            .increment({ id }, 'viewCount', 1);
+            .increment({id}, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.albumRepo
-            .increment({ id }, 'likeCount', 1);
+            .increment({id}, 'likeCount', 1);
     }
 
     private async saveAlbumUserRelation(user: User, album: Album) {
 
-        if (album.id !== 0 && !album.id) { return; }
+        if (album.id !== 0 && !album.id) {
+            return;
+        }
 
         const userAlbums = await this.albumRepo
             .createQueryBuilder('album')
             .select('album.id')
             .leftJoin('album.users', 'user')
-            .where('user.id = :id', { id: user.id })
+            .where('user.id = :id', {id: user.id})
             .getMany();
 
         const ids = new Set((userAlbums || []).map(item => item.id));
 
         ids.add(Number(album.id));
 
-        user.albums = [...ids].map(id => ({ id } as Album));
+        user.albums = [...ids].map(id => ({id} as Album));
 
         await this.userRepo.save(user);
     }

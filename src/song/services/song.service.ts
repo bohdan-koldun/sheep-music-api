@@ -1,12 +1,13 @@
-import { Injectable, Inject, Logger, HttpException, HttpStatus } from '@nestjs/common';
-import { Connection, Repository } from 'typeorm';
-import { slugify } from 'transliteration';
-import { Song } from '../entities/song.entity';
-import { Tag } from '../entities/tag.entity';
-import { SongDTO, TagDTO } from '../dto';
-import { PaginationOptionsInterface, Pagination } from '../../pagination';
-import { PrettifyService } from './prettify.service';
-import { User } from '../../user/entities';
+import {Injectable, Inject, Logger, HttpException, HttpStatus} from '@nestjs/common';
+import {Connection, Repository} from 'typeorm';
+import {slugify} from 'transliteration';
+import {Song} from '../entities/song.entity';
+import {Tag} from '../entities/tag.entity';
+import {SongDTO, TagDTO} from '../dto';
+import {PaginationOptionsInterface, Pagination} from '../../pagination';
+import {PrettifyService} from './prettify.service';
+import {User} from '../../user/entities';
+import {generateOrderFilter} from '../../utils/filter';
 
 @Injectable()
 export class SongService {
@@ -29,8 +30,8 @@ export class SongService {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         const song = await this.songRepo.findOne({
             where: [
-                { id: id ? id : null },
-                { slug: identificator },
+                {id: id ? id : null},
+                {slug: identificator},
             ],
             relations: ['tags'],
         });
@@ -38,7 +39,7 @@ export class SongService {
     }
 
     async editSong(song: SongDTO, user: User): Promise<SongDTO> {
-        if (!await this.songRepo.findOne({ id: song.id })) {
+        if (!await this.songRepo.findOne({id: song.id})) {
             throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
         }
 
@@ -46,7 +47,7 @@ export class SongService {
         song.chords = this.prettifyService.normalizeText(song.chords);
         delete song.slug;
 
-        await this.songRepo.update({ id: song.id }, song);
+        await this.songRepo.update({id: song.id}, song);
 
         await this.saveSongUserRelation(user, song as Song);
 
@@ -56,7 +57,7 @@ export class SongService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
-        const { keyword, limit, page, filter, tags } = options;
+        const {keyword, limit, page, filter, tags} = options;
         const query = this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
@@ -65,14 +66,14 @@ export class SongService {
             .leftJoinAndSelect('song.album', 'album')
             .leftJoinAndSelect('song.tags', 'tags')
             .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
-            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
+            .where('LOWER(song.title) LIKE :search', {search: `%${keyword.toLowerCase()}%`});
 
         if (tags && tags !== 'null') {
-            query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split(',') });
+            query.andWhere('tags.id IN (:...tagIds)', {tagIds: tags.split(',')});
         }
 
         const [results, total] = await query
-            .orderBy({ ...SongService.generateOrderFilter(filter) })
+            .orderBy({...generateOrderFilter(filter, 'song')})
             .take(limit)
             .skip(limit * page)
             .getManyAndCount();
@@ -83,24 +84,6 @@ export class SongService {
             countPages: Math.ceil(total / limit),
             results: results.map(user => user.toResponseObject()) as unknown as SongDTO[],
         });
-    }
-
-    static generateOrderFilter(filter: string): any {
-
-        switch (filter) {
-            case 'revert_alphabet':
-                return { 'song.title': 'DESC' };
-            case 'alphabet':
-                return { 'song.title': 'ASC' };
-            case 'newest':
-                return { 'song.createdAt': 'ASC' };
-            case 'popular':
-                return { 'song.viewCount': 'DESC' };
-            case 'favorite':
-                return { 'song.favorite': 'DESC' };
-            default:
-                return { 'song.createdAt': 'ASC' };
-        }
     }
 
     async changeSlugs() {
@@ -145,30 +128,32 @@ export class SongService {
 
     async incrementView(id: number) {
         await this.songRepo
-            .increment({ id }, 'viewCount', 1);
+            .increment({id}, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.songRepo
-            .increment({ id }, 'likeCount', 1);
+            .increment({id}, 'likeCount', 1);
     }
 
     private async saveSongUserRelation(user: User, song: Song) {
 
-        if (song.id !== 0 && !song.id) { return; }
+        if (song.id !== 0 && !song.id) {
+            return;
+        }
 
         const userSongs = await this.songRepo
             .createQueryBuilder('song')
             .select('song.id')
             .leftJoin('song.users', 'user')
-            .where('user.id = :id', { id: user.id })
+            .where('user.id = :id', {id: user.id})
             .getMany();
 
         const ids = new Set((userSongs || []).map(item => item.id));
 
         ids.add(Number(song.id));
 
-        user.songs = [...ids].map(id => ({ id } as Song));
+        user.songs = [...ids].map(id => ({id} as Song));
 
         await this.userRepo.save(user);
     }
