@@ -26,7 +26,7 @@ export class AlbumService {
         this.userRepo = this.conection.getRepository(User);
     }
 
-    async getBySlugOrId(identificator: string): Promise<AlbumDTO> {
+    async getBySlugOrId(identificator: string): Promise<Album> {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         return await this.albumRepo.findOne({
             where: [
@@ -37,7 +37,7 @@ export class AlbumService {
         });
     }
 
-    async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<AlbumDTO> {
+    async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<Album> {
         const oldData = await this.albumRepo.findOne({id: album.id});
         if (!oldData) {
             throw new HttpException('Ошибка редактирования альбома!', HttpStatus.BAD_REQUEST);
@@ -60,12 +60,12 @@ export class AlbumService {
         delete album.slug;
         await this.albumRepo.update({id: album.id}, {...album});
 
-        await this.saveAlbumUserRelation(user, album as Album);
+        await this.saveAlbumUserRelation(user, album as unknown as Album);
 
         return await this.getBySlugOrId(String(album.id));
     }
 
-    async addAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<AlbumDTO> {
+    async addAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<Album> {
         const slug = slugify(album.title);
 
         if (avatar) {
@@ -83,10 +83,11 @@ export class AlbumService {
 
         let newAlbum;
         try {
-            newAlbum = await this.albumRepo.save({...album, slug});
+            newAlbum = await this.albumRepo.save({...album, owner: user, slug});
         } catch (error) {
             newAlbum = await this.albumRepo.save({
                 ...album,
+                owner: user,
                 slug: `${slugify(album.title)}${Date.now()}`,
             });
         }
@@ -113,8 +114,8 @@ export class AlbumService {
             .orderBy({...generateOrderFilter(filter, 'album')})
             .getManyAndCount();
 
-        return new Pagination<AlbumDTO>({
-            curPage: page,
+        return new Pagination<any>({
+            curPage: Number(page),
             countPages: Math.ceil(total / limit),
             total,
             results,

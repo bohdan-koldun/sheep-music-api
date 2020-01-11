@@ -3,6 +3,7 @@ import { Album } from '../entities/album.entity';
 import { Author } from '../entities/author.entity';
 import { Attachment } from '../entities/attachment.entity';
 import { Tag } from '../entities/tag.entity';
+import {User} from '../../../dist/user/entities';
 
 export class SongDTO {
     @IsOptional()
@@ -49,5 +50,5 @@ export class SongDTO {
     tags?: Tag[];
 
     @IsOptional()
-    owner?: Tag[];
+    owner?: User;
 }

@@ -2,6 +2,7 @@ import { MinLength, IsOptional } from 'class-validator';
 import { Author } from '../entities/author.entity';
 import { Attachment } from '../entities/attachment.entity';
 import { Song } from '../entities/song.entity';
+import {User} from '../../../dist/user/entities';
 
 export class AlbumDTO {
     @IsOptional()
@@ -37,4 +38,7 @@ export class AlbumDTO {
 
     @IsOptional()
     songs: Song[];
+
+    @IsOptional()
+    owner?: User;
 }

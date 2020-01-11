@@ -63,4 +63,7 @@ export class Album {
 
     @ManyToMany(type => User, user => user.albums, { cascade: false })
     users: User[];
+
+    @ManyToOne(type => User)
+    owner: User;
 }
