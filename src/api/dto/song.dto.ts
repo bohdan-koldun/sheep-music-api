@@ -46,5 +46,8 @@ export class SongDTO {
     author: Author;
 
     @IsOptional()
-    tags: Tag[];
+    tags?: Tag[];
+
+    @IsOptional()
+    owner?: Tag[];
 }

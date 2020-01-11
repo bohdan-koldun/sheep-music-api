@@ -9,7 +9,6 @@ import {User} from '../../../user/entities';
 @Injectable()
 export class SongAddService {
     private readonly songRepo: Repository<Song>;
-    private readonly userRepo: Repository<User>;
     @Inject()
     private readonly prettifyService: PrettifyService;
 
@@ -18,16 +17,16 @@ export class SongAddService {
         private readonly connection: Connection,
     ) {
         this.songRepo = this.connection.getRepository(Song);
-        this.userRepo = this.connection.getRepository(User);
     }
 
-    async create(data: SongDTO, user: User): Promise<SongDTO> {
+    async create(data: SongDTO, user: User): Promise<Song> {
         const createSong = slug => this.songRepo.save(
             {
                 ...data,
                 text: this.prettifyService.normalizeText(data.text),
                 chords: this.prettifyService.normalizeText(data.chords),
                 slug,
+                owner: user,
             },
         );
 

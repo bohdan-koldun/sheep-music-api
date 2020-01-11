@@ -78,6 +78,9 @@ export class Song {
     @ManyToMany(type => User, user => user.songs, { cascade: false })
     users: User[];
 
+    @ManyToOne(type => User)
+    owner: User;
+
     toResponseObject(): SongDTO {
         const {
             id,
