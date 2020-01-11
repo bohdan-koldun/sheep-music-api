@@ -1,6 +1,6 @@
 import {
     Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany,
-    CreateDateColumn, UpdateDateColumn, Index, ManyToMany,
+    CreateDateColumn, UpdateDateColumn, Index, ManyToMany, ManyToOne,
 } from 'typeorm';
 import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
@@ -52,4 +52,7 @@ export class Author {
 
     @ManyToMany(type => User, user => user.authors, { cascade: false })
     users: User[];
+
+    @ManyToOne(type => User)
+    owner: User;
 }

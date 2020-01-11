@@ -80,10 +80,11 @@ export class AuthorService {
 
         let newAuthor;
         try {
-            newAuthor = await this.authorRepo.save({ ...author, slug });
+            newAuthor = await this.authorRepo.save({ ...author, owner: user, slug });
         } catch (error) {
             newAuthor = await this.authorRepo.save({
                 ...author,
+                owner: user,
                 slug: `${slugify(author.title)}${Date.now()}`,
             });
         }
