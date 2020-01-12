@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, JoinColumn, ManyToMany, ManyToOne, Index } from 'typeorm';
 import { Song } from './song.entity';
+import {User} from '../../user/entities';
 
 @Entity('translations')
 export class Translation {
@@ -18,4 +19,6 @@ export class Translation {
     @ManyToMany(type => Song, song => song.translations, { cascade: false })
     songs: Song[];
 
+    @ManyToOne(type => User)
+    owner: User;
 }
