@@ -1,5 +1,5 @@
 import { IsOptional, IsNotEmpty } from 'class-validator';
-import {User} from '../../../dist/user/entities';
+import {User} from '../../user/entities/user.entity';
 
 export class TagDTO {
     @IsOptional()

@@ -3,7 +3,7 @@ import { Album } from '../entities/album.entity';
 import { Author } from '../entities/author.entity';
 import { Attachment } from '../entities/attachment.entity';
 import { Tag } from '../entities/tag.entity';
-import {User} from '../../../dist/user/entities';
+import {User} from '../../user/entities/user.entity';
 
 export class SongDTO {
     @IsOptional()

@@ -1,6 +1,6 @@
 
 import { IsUrl, IsOptional } from 'class-validator';
-import {User} from '../../../dist/user/entities';
+import {User} from '../../user/entities';
 
 export class AttachmentDTO {
     @IsOptional()
