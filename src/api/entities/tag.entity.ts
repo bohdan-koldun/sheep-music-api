@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, Index } from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn, ManyToMany, Index, ManyToOne} from 'typeorm';
 import { Song } from './song.entity';
+import {User} from '../../user/entities';
 
 @Entity('tags')
 export class Tag {
@@ -12,4 +13,7 @@ export class Tag {
 
     @ManyToMany(type => Song, song => song.tags, { cascade: false })
     songs: Song[];
+
+    @ManyToOne(type => User)
+    owner: User;
 }
