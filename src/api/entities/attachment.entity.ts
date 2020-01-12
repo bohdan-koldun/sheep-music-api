@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, Index } from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne} from 'typeorm';
+import {User} from '../../user/entities';
 
 @Entity('attachments')
 export class Attachment {
@@ -15,4 +16,7 @@ export class Attachment {
 
     @Column({ type: 'real', nullable: true })
     duration: number;
+
+    @ManyToOne(type => User)
+    owner: User;
 }

@@ -6,7 +6,7 @@ import { FileAwsUploaderService } from '../../../file-aws-uploader/file.aws.uplo
 
 @Injectable()
 export class AttachmentService {
-    private readonly atachmentRepo: Repository<Attachment>;
+    private readonly attachmentRepo: Repository<Attachment>;
     @Inject()
     private readonly fileAwsUploader: FileAwsUploaderService;
 
@@ -14,7 +14,7 @@ export class AttachmentService {
         @Inject('DATABASE_CONNECTION')
         private readonly conection: Connection,
     ) {
-        this.atachmentRepo = this.conection.getRepository(Attachment);
+        this.attachmentRepo = this.conection.getRepository(Attachment);
     }
 
     async saveSquareImageAttachment(file: any, dimension: number, slug: string, attachment?: Attachment): Promise<Attachment> {
@@ -35,7 +35,7 @@ export class AttachmentService {
             `${slug ? `${slug}-` : ''}avatar${Date.now()}${originalname ? `.${originalname.split('.').pop()}` : ''}`,
         );
 
-        const newAtttachment = await this.atachmentRepo
+        const newAtttachment = await this.attachmentRepo
             .save({
                 ...(attachment || {}),
                 path: Location,
@@ -49,7 +49,7 @@ export class AttachmentService {
         if (attachment) {
             this.fileAwsUploader.deleteFromOceanSpaces(attachment.awsKey);
 
-            await this.atachmentRepo.remove(attachment);
+            await this.attachmentRepo.remove(attachment);
         }
 
     }
