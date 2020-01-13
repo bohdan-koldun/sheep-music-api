@@ -8,7 +8,7 @@ import {
     ApiImplicitFile,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { imageMulterilter } from '../../common/filters/multer.files.filter';
+import { imageMulterFilter } from '../../common/filters/multer.files.filter';
 import { Roles, GetUser } from '../../common/decorators';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AlbumService } from '../services';
@@ -61,7 +61,7 @@ export class AlbumController {
         limits: {
             fileSize: 3 * 1024 * 1024, // 2 Mb
         },
-        fileFilter: imageMulterilter,
+        fileFilter: imageMulterFilter,
 
     }))
     @ApiConsumes('multipart/form-data')
@@ -78,7 +78,7 @@ export class AlbumController {
         limits: {
             fileSize: 3 * 1024 * 1024, // 2 Mb
         },
-        fileFilter: imageMulterilter,
+        fileFilter: imageMulterFilter,
 
     }))
     @ApiConsumes('multipart/form-data')

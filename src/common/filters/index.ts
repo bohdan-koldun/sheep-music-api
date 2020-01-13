@@ -1,7 +1,7 @@
-import { imageMulterilter } from './multer.files.filter';
+import { imageMulterFilter } from './multer.files.filter';
 import { HttpErrorFilter } from './http-error.filter';
 
 export {
     HttpErrorFilter,
-    imageMulterilter,
+    imageMulterFilter,
 };

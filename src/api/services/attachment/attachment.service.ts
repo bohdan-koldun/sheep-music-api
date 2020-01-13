@@ -45,6 +45,12 @@ export class AttachmentService {
         return newAtttachment;
     }
 
+    async saveMp3(file: any, slug: string, attachment?: Attachment): Promise<Attachment> {
+       // TODO:
+
+        return null;
+    }
+
     async removeAttachment(attachment: Attachment) {
         if (attachment) {
             this.fileAwsUploader.deleteFromOceanSpaces(attachment.awsKey);

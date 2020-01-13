@@ -1,12 +1,28 @@
-import {Controller, Inject, Get, Request, Param, UseGuards, Body, Put, HttpCode, Post} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Roles, GetUser } from '../../common/decorators';
-import {SongService, PrettifyService, TagsService, SongAddService} from '../services';
-import { Pagination } from '../../pagination';
-import { SongDTO, TagDTO } from '../dto';
-import { RolesGuard } from '../../common/guards/roles.guard';
-import { ValidationPipe } from '../../common/pipes/validation.pipe';
-import { User } from '../../user/entities';
+import {
+    Controller,
+    Inject,
+    Get,
+    Request,
+    Param,
+    UseGuards,
+    Body,
+    Put,
+    HttpCode,
+    Post,
+    UseInterceptors,
+    UploadedFiles,
+} from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {Roles, GetUser} from '../../common/decorators';
+import {SongService, PrettifyService, TagsService, SongAddService, SongFileService} from '../services';
+import {Pagination} from '../../pagination';
+import {SongDTO, TagDTO} from '../dto';
+import {RolesGuard} from '../../common/guards/roles.guard';
+import {ValidationPipe} from '../../common/pipes/validation.pipe';
+import {User} from '../../user/entities';
+import {FileFieldsInterceptor} from '@nestjs/platform-express';
+import {ApiConsumes} from '@nestjs/swagger';
+import {audioMulterFilter} from '../../common/filters/multer.files.filter';
 
 @Controller('songs')
 export class SongController {
@@ -14,6 +30,8 @@ export class SongController {
     private readonly songService: SongService;
     @Inject()
     private readonly songAddService: SongAddService;
+    @Inject()
+    private readonly songFileService: SongFileService;
     @Inject()
     private readonly tagsService: TagsService;
     @Inject()
@@ -82,5 +100,26 @@ export class SongController {
     @UseGuards(AuthGuard('jwt'))
     async prettifyText() {
         return await this.prettifyService.normalizeSongsText();
+    }
+
+    @Put('/audio/:id')
+    @UseGuards(RolesGuard)
+    @Roles('admin', 'moderator')
+    @UseGuards(AuthGuard('jwt'))
+    @UseInterceptors(FileFieldsInterceptor(
+        [
+            {name: 'songMp3', maxCount: 1},
+            {name: 'phonogramMp3', maxCount: 1},
+        ],
+        {
+            limits: {
+                fileSize: 14 * 1024 * 1024,
+            },
+            fileFilter: audioMulterFilter,
+        },
+    ))
+    @ApiConsumes('multipart/form-data')
+    async editAudio(@UploadedFiles() files, @Param('id') id, @GetUser() authUser: User) {
+        return this.songFileService.addMp3Files(files, id, authUser);
     }
 }
