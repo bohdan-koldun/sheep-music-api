@@ -7,7 +7,7 @@ import {SongDTO, TagDTO} from '../../dto';
 import {PaginationOptionsInterface, Pagination} from '../../../pagination';
 import {PrettifyService} from '../prettify/prettify.service';
 import {User} from '../../../user/entities';
-import {generateOrderFilter} from '../../../utils/filter';
+import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class SongService {

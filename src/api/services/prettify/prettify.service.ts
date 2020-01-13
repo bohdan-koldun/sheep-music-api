@@ -1,8 +1,8 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import * as striptags from 'striptags';
-import { setMetadata } from '../../../utils/mp3.file';
-import { downloadFileFromUrl } from '../../../utils/axios.uploader';
+import { setMetadata } from '../../../common/utils/mp3.file';
+import { downloadFileFromUrl } from '../../../common/utils/axios.uploader';
 import { Song } from '../../entities/song.entity';
 import { Attachment } from '../../entities/attachment.entity';
 import * as mp3Duration from 'mp3-duration';

@@ -7,7 +7,7 @@ import {AlbumDTO} from '../../dto';
 import {PaginationOptionsInterface, Pagination} from '../../../pagination';
 import {AttachmentService} from '../attachment/attachment.service';
 import {User} from '../../../user/entities';
-import {generateOrderFilter} from '../../../utils/filter';
+import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class AlbumService {

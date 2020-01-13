@@ -3,7 +3,7 @@ import { Repository, Connection } from 'typeorm';
 import * as cheerio from 'cheerio';
 import { AttachmentService } from '../api/services';
 import { Author } from '../api/entities/author.entity';
-import { getUrlHtml, downloadFileFromUrl } from '../utils/axios.uploader';
+import { getUrlHtml, downloadFileFromUrl } from '../common/utils/axios.uploader';
 
 @Injectable()
 export class AuthorParserService implements OnModuleInit {

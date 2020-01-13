@@ -3,7 +3,7 @@ import {Connection, Repository} from 'typeorm';
 import {Song} from '../../entities/song.entity';
 import {Album} from '../../entities/album.entity';
 import {Author} from '../../entities/author.entity';
-import {generateOrderFilter} from '../../../utils/filter';
+import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class StatisticService {
