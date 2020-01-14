@@ -1,8 +1,11 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import {Injectable, Inject, HttpException, HttpStatus, Logger} from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import * as sharp from 'sharp';
 import { Attachment } from '../../entities/attachment.entity';
 import { FileAwsUploaderService } from '../../../file-aws-uploader/file.aws.uploader';
+import * as mp3Duration from 'mp3-duration';
+import {setMetadata} from '../../../common/utils/mp3.file';
+import {Song} from '../../entities/song.entity';
 
 @Injectable()
 export class AttachmentService {
@@ -45,10 +48,32 @@ export class AttachmentService {
         return newAtttachment;
     }
 
-    async saveMp3(file: any, slug: string, attachment?: Attachment): Promise<Attachment> {
-       // TODO:
+    async saveMp3(file: any, song: Song, slug = 'song'): Promise<Attachment> {
+            try {
+                const { buffer, originalname } = file;
 
-        return null;
+                const fileType = originalname?.split('.').pop();
+                const duration = await mp3Duration(buffer);
+                const awsKey = `${slug}_${song.slug}_SM.${fileType || ''}`;
+
+                const newBuffer = setMetadata(buffer, {
+                    title: song.title + ' | sheep-music.com',
+                    artist: song.author && song.author.title || undefined,
+                    album: song.album && song.album.title || undefined,
+                    commentText: 'Христианские песни | sheep-music.com',
+                });
+
+                const { Location } =  await this.fileAwsUploader.uploadToS3(newBuffer, awsKey);
+
+                return this.attachmentRepo.save({
+                    duration,
+                    path: `https://${Location}`,
+                    awsKey,
+                });
+            } catch (error) {
+                Logger.error(error.message);
+            }
+
     }
 
     async removeAttachment(attachment: Attachment) {
@@ -57,6 +82,5 @@ export class AttachmentService {
 
             await this.attachmentRepo.remove(attachment);
         }
-
     }
 }
