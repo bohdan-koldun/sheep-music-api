@@ -122,8 +122,15 @@ export class AlbumService {
         });
     }
 
-    async getIdTitleList() {
-        return await this.albumRepo.find({select: ['id', 'title']});
+    async getIdTitleList(authorId) {
+        const query = this.albumRepo.createQueryBuilder('album');
+
+        if (!isNaN(parseInt(authorId, 10))) {
+            query.leftJoinAndSelect('album.author', 'author')
+                .where('author.id=:authorId', { authorId });
+        }
+
+        return await query.select(['album.id', 'album.title']).getMany();
     }
 
     async incrementView(id: number) {

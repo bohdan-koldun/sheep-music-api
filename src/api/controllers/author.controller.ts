@@ -1,6 +1,6 @@
 import {
     Controller, Inject, Get, Request, Param, Put, UseGuards, Body,
-    ValidationPipe, UseInterceptors, UploadedFile, Post, HttpCode,
+    ValidationPipe, UseInterceptors, UploadedFile, Post, HttpCode, Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -49,8 +49,8 @@ export class AuthorController {
     }
 
     @Get('list/id')
-    async getAllListId(): Promise<AuthorDTO[]> {
-        return await this.authorService.getIdTitleList();
+    async getAllListId(@Query() query): Promise<AuthorDTO[]> {
+        return await this.authorService.getIdTitleList(query.albumId);
     }
 
     @Put()

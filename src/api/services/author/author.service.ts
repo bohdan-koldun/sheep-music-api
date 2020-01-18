@@ -6,7 +6,7 @@ import { PaginationOptionsInterface, Pagination } from '../../../pagination';
 import { Author } from '../../entities/author.entity';
 import { AttachmentService } from '../attachment/attachment.service';
 import { User } from '../../../user/entities';
-import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
+import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class AuthorService {
@@ -120,8 +120,15 @@ export class AuthorService {
         });
     }
 
-    async getIdTitleList() {
-        return await this.authorRepo.find({ select: ['id', 'title'] });
+    async getIdTitleList(albumId) {
+        const query = this.authorRepo.createQueryBuilder('author');
+
+        if (!isNaN(parseInt(albumId, 10))) {
+            query.leftJoinAndSelect('author.albums', 'album')
+                .where('album.id=:albumId', { albumId });
+        }
+
+        return await query.select(['author.id', 'author.title']).getMany();
     }
 
     async incrementView(id: number) {
