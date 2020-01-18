@@ -47,7 +47,7 @@ export class SongService {
         song.chords = this.prettifyService.normalizeText(song.chords);
         delete song.slug;
 
-        await this.songRepo.update({id: song.id}, song as unknown as Song);
+        await this.songRepo.save(song as unknown as Song);
 
         await this.saveSongUserRelation(user, song as unknown as Song);
 
