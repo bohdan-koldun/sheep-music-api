@@ -28,6 +28,7 @@ export class AlbumService {
 
     async getBySlugOrId(identificator: string): Promise<Album> {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
+
         return await this.albumRepo.findOne({
             where: [
                 {id: id ? id : null},
@@ -38,9 +39,24 @@ export class AlbumService {
     }
 
     async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<Album> {
-        const oldData = await this.albumRepo.findOne({id: album.id});
+        const oldData = await this.albumRepo.findOne({where: {id: album.id}, relations: ['songs']});
+
         if (!oldData) {
             throw new HttpException('Ошибка редактирования альбома!', HttpStatus.BAD_REQUEST);
+        }
+
+        const {author} = album as any;
+
+        if (author && Number.isInteger(Number(author))) {
+            if (oldData.songs?.length) {
+                throw new HttpException(
+                    `Нельзя изменить исполнителя, альбом уже имеет песни: ${oldData.songs.map(item => item.title).join(', ')}`,
+                    HttpStatus.BAD_REQUEST,
+                );
+            }
+
+        } else {
+            delete album.author;
         }
 
         if (avatar) {
@@ -53,12 +69,11 @@ export class AlbumService {
                 );
         }
 
-        if (!await this.authorRepo.findOne({id: Number(album.author) || null})) {
-            delete album.author;
-        }
-
         delete album.slug;
-        await this.albumRepo.update({id: album.id}, {...album});
+
+        await this.albumRepo.update({id: album.id}, {
+            ...album,
+        });
 
         await this.saveAlbumUserRelation(user, album as unknown as Album);
 
@@ -127,7 +142,7 @@ export class AlbumService {
 
         if (!isNaN(parseInt(authorId, 10))) {
             query.leftJoinAndSelect('album.author', 'author')
-                .where('author.id=:authorId', { authorId });
+                .where('author.id=:authorId', {authorId});
         }
 
         return await query.select(['album.id', 'album.title']).getMany();
