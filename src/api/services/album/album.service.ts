@@ -48,7 +48,7 @@ export class AlbumService {
         const {author} = album as any;
 
         if (author && Number.isInteger(Number(author))) {
-            if (oldData.songs?.length) {
+            if (oldData.songs?.length && oldData.author?.id !== Number(author)) {
                 throw new HttpException(
                     `Нельзя изменить исполнителя, альбом уже имеет песни: ${oldData.songs.map(item => item.title).join(', ')}`,
                     HttpStatus.BAD_REQUEST,

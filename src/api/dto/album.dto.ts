@@ -28,6 +28,12 @@ export class AlbumDTO {
     googlePlay: string;
 
     @IsOptional()
+    soundCloud: string;
+
+    @IsOptional()
+    youtubeMusic: string;
+
+    @IsOptional()
     parsedSource: string;
 
     @IsOptional()
