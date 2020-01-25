@@ -1,6 +1,6 @@
 import {
     Controller, Inject, Get, Request, Param, Put, Post, UseGuards,
-    UseInterceptors, UploadedFile, Body, ValidationPipe, HttpCode, Query,
+    UseInterceptors, UploadedFile, Body, HttpCode, Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { imageMulterFilter } from '../../common/filters/multer.files.filter';
+import {ValidationPipe} from '../../common/pipes/validation.pipe';
 import { Roles, GetUser } from '../../common/decorators';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AlbumService } from '../services';
@@ -59,7 +60,7 @@ export class AlbumController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize: 3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024, // 3 Mb
         },
         fileFilter: imageMulterFilter,
 
@@ -76,7 +77,7 @@ export class AlbumController {
     @UseGuards(AuthGuard('jwt'))
     @UseInterceptors(FileInterceptor('avatar', {
         limits: {
-            fileSize: 3 * 1024 * 1024, // 2 Mb
+            fileSize: 3 * 1024 * 1024,
         },
         fileFilter: imageMulterFilter,
 

@@ -73,7 +73,7 @@ export class AuthorService {
             author.thumbnail = await this.attachmentService
                 .saveSquareImageAttachment(
                     avatar,
-                    600,
+                    400,
                     slug,
                 );
         }

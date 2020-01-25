@@ -9,6 +9,7 @@ import {
     TagsService,
     StatisticService,
     SongAddService,
+    SongEditService,
     SongFileService,
 } from './services';
 
@@ -16,6 +17,7 @@ export const apiProviders = [
     SongParserService,
     SongService,
     SongAddService,
+    SongEditService,
     SongFileService,
     PrettifyService,
     AlbumService,

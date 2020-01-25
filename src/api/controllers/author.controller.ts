@@ -1,6 +1,6 @@
 import {
     Controller, Inject, Get, Request, Param, Put, UseGuards, Body,
-    ValidationPipe, UseInterceptors, UploadedFile, Post, HttpCode, Query,
+    UseInterceptors, UploadedFile, Post, HttpCode, Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { imageMulterFilter } from '../../common/filters/multer.files.filter';
+import {ValidationPipe} from '../../common/pipes/validation.pipe';
 import { Roles, GetUser } from '../../common/decorators';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthorService } from '../services';

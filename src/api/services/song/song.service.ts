@@ -1,19 +1,16 @@
-import {Injectable, Inject, Logger, HttpException, HttpStatus} from '@nestjs/common';
+import {Injectable, Inject, Logger} from '@nestjs/common';
 import {Connection, Repository} from 'typeorm';
 import {slugify} from 'transliteration';
 import {Song} from '../../entities/song.entity';
-import {Tag} from '../../entities/tag.entity';
-import {SongDTO, TagDTO} from '../../dto';
+import {SongDTO} from '../../dto';
 import {PaginationOptionsInterface, Pagination} from '../../../pagination';
 import {PrettifyService} from '../prettify/prettify.service';
-import {User} from '../../../user/entities';
 import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class SongService {
     private readonly songRepo: Repository<Song>;
-    private readonly tagRepo: Repository<Tag>;
-    private readonly userRepo: Repository<User>;
+
     @Inject()
     private readonly prettifyService: PrettifyService;
 
@@ -22,8 +19,6 @@ export class SongService {
         private readonly conection: Connection,
     ) {
         this.songRepo = this.conection.getRepository(Song);
-        this.tagRepo = this.conection.getRepository(Tag);
-        this.userRepo = this.conection.getRepository(User);
     }
 
     async getBySlugOrId(identificator: string): Promise<SongDTO> {
@@ -36,22 +31,6 @@ export class SongService {
             relations: ['tags'],
         });
         return song ? song.toResponseObject() : null;
-    }
-
-    async editSong(song: SongDTO, user: User): Promise<SongDTO> {
-        if (!await this.songRepo.findOne({id: song.id})) {
-            throw new HttpException('Ошибка редактирования!', HttpStatus.BAD_REQUEST);
-        }
-
-        song.text = this.prettifyService.normalizeText(song.text);
-        song.chords = this.prettifyService.normalizeText(song.chords);
-        delete song.slug;
-
-        await this.songRepo.save(song as unknown as Song);
-
-        await this.saveSongUserRelation(user, song as unknown as Song);
-
-        return await this.getBySlugOrId(String(song.id));
     }
 
     async paginate(
@@ -86,46 +65,6 @@ export class SongService {
         });
     }
 
-    async changeSlugs() {
-        let result = [];
-        let page = 0;
-
-        do {
-            result = await this.songRepo
-                .createQueryBuilder('song')
-                .take(200)
-                .skip(page * 200)
-                .getMany();
-
-            await Promise.all(
-                result.map(
-                    async (song) => {
-                        try {
-                            if (song && song.title) {
-                                song.slug = slugify(song.title);
-                                await this.songRepo.save(song);
-                            }
-
-                        } catch (error) {
-                            try {
-                                if (song && song.title) {
-                                    song.slug = slugify(song.title) + Date.now();
-                                    await this.songRepo.save(song);
-                                }
-                            } catch (error) {
-                                Logger.error(error.message, error);
-                            }
-                        }
-                    },
-                ),
-            );
-            page++;
-
-        } while (result && result.length);
-
-        return 'done change slugs';
-    }
-
     async incrementView(id: number) {
         await this.songRepo
             .increment({id}, 'viewCount', 1);
@@ -134,27 +73,5 @@ export class SongService {
     async incrementLike(id: number) {
         await this.songRepo
             .increment({id}, 'likeCount', 1);
-    }
-
-    private async saveSongUserRelation(user: User, song: Song) {
-
-        if (song.id !== 0 && !song.id) {
-            return;
-        }
-
-        const userSongs = await this.songRepo
-            .createQueryBuilder('song')
-            .select('song.id')
-            .leftJoin('song.users', 'user')
-            .where('user.id = :id', {id: user.id})
-            .getMany();
-
-        const ids = new Set((userSongs || []).map(item => item.id));
-
-        ids.add(Number(song.id));
-
-        user.songs = [...ids].map(id => ({id} as Song));
-
-        await this.userRepo.save(user);
     }
 }

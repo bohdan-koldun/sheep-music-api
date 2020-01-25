@@ -13,7 +13,7 @@ export class SongDTO {
     @MinLength(2)
     slug: string;
 
-    @MinLength(2)
+    @MinLength(2, {message: 'Длина заголовка должна быть 2 и больше символов'})
     title: string;
 
     @IsOptional()

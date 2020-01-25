@@ -1,18 +1,18 @@
-import { MinLength, IsOptional } from 'class-validator';
-import { Author } from '../entities/author.entity';
-import { Attachment } from '../entities/attachment.entity';
-import { Song } from '../entities/song.entity';
+import {MinLength, IsOptional} from 'class-validator';
+import {Author} from '../entities/author.entity';
+import {Attachment} from '../entities/attachment.entity';
+import {Song} from '../entities/song.entity';
 import {User} from '../../user/entities';
 
 export class AlbumDTO {
     @IsOptional()
     id: number;
 
-    @MinLength(2)
     @IsOptional()
+    @MinLength(2)
     slug: string;
 
-    @MinLength(2)
+    @MinLength(2, {message: 'Длина заголовка должна быть 2 и больше символов'})
     title: string;
 
     @IsOptional()

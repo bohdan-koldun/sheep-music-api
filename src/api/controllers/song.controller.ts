@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {Roles, GetUser} from '../../common/decorators';
-import {SongService, PrettifyService, TagsService, SongAddService, SongFileService} from '../services';
+import {SongService, PrettifyService, TagsService, SongAddService, SongFileService, SongEditService} from '../services';
 import {Pagination} from '../../pagination';
 import {SongDTO, TagDTO} from '../dto';
 import {RolesGuard} from '../../common/guards/roles.guard';
@@ -30,6 +30,8 @@ export class SongController {
     private readonly songService: SongService;
     @Inject()
     private readonly songAddService: SongAddService;
+    @Inject()
+    private readonly songEditService: SongEditService;
     @Inject()
     private readonly songFileService: SongFileService;
     @Inject()
@@ -75,7 +77,7 @@ export class SongController {
     @Roles('admin', 'moderator')
     @UseGuards(AuthGuard('jwt'))
     async edit(@Body(new ValidationPipe()) song: SongDTO, @GetUser() authUser: User) {
-        return await this.songService.editSong(song, authUser);
+        return await this.songEditService.edit(song, authUser);
     }
 
     @Post()

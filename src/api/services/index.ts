@@ -8,6 +8,7 @@ import { AttachmentService } from './attachment/attachment.service';
 import { TagsService } from './tags/tags.service';
 import { StatisticService } from './statistic/statistic.service';
 import { SongAddService } from './song/song.add.service';
+import {SongEditService } from './song/song.edit.service';
 import { SongFileService } from './song/song.file.service';
 
 export {
@@ -21,5 +22,6 @@ export {
     TagsService,
     StatisticService,
     SongAddService,
+    SongEditService,
     SongFileService,
 };
