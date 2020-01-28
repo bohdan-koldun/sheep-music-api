@@ -20,29 +20,42 @@ export class SongFileService {
     }
 
     async addMp3Files(files: any, id, user: User) {
-        const song = await this.songRepo.findOneOrFail({where: {id}, relations: ['author', 'album']} );
+        const song = await this.songRepo.findOneOrFail({where: {id}, relations: ['author', 'album', 'audioMp3', 'phonogramMp3']} );
 
         const {songMp3, phonogramMp3} = (files || {});
-        let attachmentSongMp3: Attachment;
-        let attachmentPhonogramMp3: Attachment;
+        let audioAttachment: Attachment;
+        let phonogramAttachment: Attachment;
 
         try {
 
             if (songMp3?.[0]) {
-                attachmentSongMp3 = await this.attachmentService.saveMp3(songMp3[0], song);
+                audioAttachment = await this.attachmentService.saveMp3(songMp3[0], song);
             }
 
             if (phonogramMp3?.[0]) {
-                attachmentPhonogramMp3 = await this.attachmentService.saveMp3(phonogramMp3[0], song, 'phonogram');
+                phonogramAttachment = await this.attachmentService.saveMp3(phonogramMp3[0], song, 'phonogram');
             }
 
-            await this.songRepo.save(song);
+            const { audioMp3: oldAudio, phonogramMp3: oldPhonogram } = song;
 
-            return {attachmentSongMp3, attachmentPhonogramMp3};
+            const result = await this.songRepo.save({
+                ...song,
+                phonogramMp3: phonogramAttachment || oldPhonogram,
+                audioMp3: audioAttachment || oldAudio,
+            });
 
+            if (phonogramAttachment) {
+                this.attachmentService.removeAttachment(oldPhonogram);
+            }
+
+            if (audioAttachment) {
+                this.attachmentService.removeAttachment(oldAudio);
+            }
+
+            return result;
         } catch (error) {
-            await this.attachmentService.removeAttachment(attachmentSongMp3);
-            await this.attachmentService.removeAttachment(attachmentPhonogramMp3);
+            await this.attachmentService.removeAttachment(audioAttachment);
+            await this.attachmentService.removeAttachment(phonogramAttachment);
 
             throw new HttpException('Ошибка сохранения mp3 файлов!', HttpStatus.BAD_REQUEST);
         }

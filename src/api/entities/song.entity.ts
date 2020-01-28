@@ -52,6 +52,10 @@ export class Song {
     @JoinColumn()
     audioMp3: Attachment;
 
+    @ManyToOne(type => Attachment, { cascade: true, onDelete: 'CASCADE', eager: true })
+    @JoinColumn()
+    phonogramMp3: Attachment;
+
     @Column({ type: 'varchar', length: 20, nullable: true })
     language: string;
 
@@ -91,6 +95,7 @@ export class Song {
             text,
             album,
             audioMp3,
+            phonogramMp3,
             author,
             tags,
             video,
@@ -108,6 +113,7 @@ export class Song {
             text,
             album,
             audioMp3,
+            phonogramMp3,
             author,
             tags,
             video,

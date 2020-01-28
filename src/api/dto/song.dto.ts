@@ -29,6 +29,9 @@ export class SongDTO {
     audioMp3: Attachment;
 
     @IsOptional()
+    phonogramMp3: Attachment;
+
+    @IsOptional()
     video: string;
 
     @IsOptional()

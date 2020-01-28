@@ -54,7 +54,7 @@ export class AttachmentService {
 
                 const fileType = originalname?.split('.').pop();
                 const duration = await mp3Duration(buffer);
-                const awsKey = `${slug}_${song.slug}_SM.${fileType || ''}`;
+                const awsKey = `${slug}_${song.slug}_SM${Date.now()}.${fileType || ''}`;
 
                 const newBuffer = setMetadata(buffer, {
                     title: song.title + ' | sheep-music.com',
@@ -67,7 +67,7 @@ export class AttachmentService {
 
                 return this.attachmentRepo.save({
                     duration,
-                    path: `https://${Location}`,
+                    path: Location,
                     awsKey,
                 });
             } catch (error) {
