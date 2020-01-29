@@ -35,6 +35,9 @@ export class SongDTO {
     video: string;
 
     @IsOptional()
+    language: string;
+
+    @IsOptional()
     parsedSource?: string;
 
     @IsOptional()
