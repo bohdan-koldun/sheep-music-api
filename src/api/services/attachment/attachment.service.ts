@@ -67,7 +67,7 @@ export class AttachmentService {
 
                 return this.attachmentRepo.save({
                     duration,
-                    path: Location,
+                    path: /https/.test(Location) ? Location : `https://${Location}`,
                     awsKey,
                 });
             } catch (error) {
