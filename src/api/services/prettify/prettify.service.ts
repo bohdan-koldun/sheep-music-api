@@ -210,7 +210,7 @@ export class PrettifyService {
                 return result.push(`<span class="bridge">Instrumental:</span>`);
             } else if (/INTERLUDE:|Interlude:/g.test(line)) {
                 return result.push(`<span class="bridge">Interlude:</span>`);
-            } else if (/Куплет:|куплет:|КУПЛЕТ:/g.test(line)) {
+            } else if (/Куплет:|куплет:|КУПЛ/g.test(line)) {
                 return result.push(`<span class="verse">Куплет:</span>`);
             } else if (/Бридж:|Мост:|БРИДЖ:|Бридж|Мостик:|МОСТИК:/g.test(line)) {
                 return result.push(`<span class="bridge">Мост:</span>`);
@@ -220,8 +220,10 @@ export class PrettifyService {
                 return result.push(`<span class="bridge">Bridge:</span>`);
             } else if (/TAG:|Tag:/g.test(line)) {
                 return result.push(`<span class="bridge">Tag:</span>`);
-            } else if (/Реп:|РЕП:/g.test(line)) {
-                return result.push(`<span class="bridge">Реп:</span>`);
+            } else if (/TAG:|Tag:/g.test(line)) {
+                return result.push(`<span class="bridge">Tag:</span>`);
+            } else if (/Refrain:|REFRAIN:/g.test(line)) {
+                return result.push(`<span class="bridge">Refrain:</span>`);
             } else {
                 return result.push(line);
             }
