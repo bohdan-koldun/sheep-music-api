@@ -41,6 +41,9 @@ export class Album {
     @Column({ type: 'varchar', length: 500, nullable: true })
     youtubeMusic: string;
 
+    @Column({ type: 'varchar', length: 500, nullable: true })
+    deezer: string;
+
     @Column({ type: 'varchar', length: 500, nullable: true, select: false })
     parsedSource: string;
 

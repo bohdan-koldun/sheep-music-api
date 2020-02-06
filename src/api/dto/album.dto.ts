@@ -34,6 +34,9 @@ export class AlbumDTO {
     youtubeMusic: string;
 
     @IsOptional()
+    deezer: string;
+
+    @IsOptional()
     parsedSource: string;
 
     @IsOptional()
