@@ -166,11 +166,11 @@ export class PrettifyService {
                 return result.push(`<span class="chorus">Intro:</span>`);
             } else if (/Пред припев:|Пред-припев:/g.test(line)) {
                 return result.push(`<span class="chorus">Пред припев:</span>`);
-            } else if (/Pre chorus:|PRE CHORUS:/g.test(line)) {
+            } else if (/Pre chorus:|PRE CHORUS:|PRE-CHORUS:/g.test(line)) {
                 return result.push(`<span class="chorus">Pre chorus:</span>`);
-            } else if (/Post chorus:/g.test(line)) {
+            } else if (/Post chorus:|POST-CHORUS:|POST CHORUS:/g.test(line)) {
                 return result.push(`<span class="chorus">Post chorus:</span>`);
-            } else if (/Outro:/g.test(line)) {
+            } else if (/Outro:|OUTRO:/g.test(line)) {
                 return result.push(`<span class="chorus">Outro:</span>`);
             } else if (/Chorus|CHORUS:|Chorus:/g.test(line)) {
                 return result.push(`<span class="chorus">Chorus:</span>`);
@@ -188,19 +188,19 @@ export class PrettifyService {
                 return result.push(`<span class="verse">5 куплет:</span>`);
             } else if (/6 куплет:|6 КУПЛЕТ:|КУПЛЕТ 6:|Куплет 6:/g.test(line)) {
                 return result.push(`<span class="verse">6 куплет:</span>`);
-            } else if (/1 verse:|Verse 1|Verse: 1|VERSE: 1|1 VERSE:/g.test(line)) {
+            } else if (/1 verse:|Verse 1|Verse: 1|VERSE: 1|VERSE 1|1 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">1 verse:</span>`);
-            } else if (/2 verse:|Verse 2|Verse: 2|VERSE: 2|2 VERSE:/g.test(line)) {
+            } else if (/2 verse:|Verse 2|Verse: 2|VERSE: 2|VERSE 2|2 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">2 verse:</span>`);
             } else if (/3 verse:|Verse 3|Verse: 3|VERSE: 3|3 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">3 verse:</span>`);
-            } else if (/4 verse:|Verse 4|Verse: 4|VERSE: 4|4 VERSE:/g.test(line)) {
+            } else if (/4 verse:|Verse 4|Verse: 4|VERSE: 4|VERSE 4|4 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">4 verse:</span>`);
-            } else if (/5 verse:|Verse 5|Verse: 5|VERSE: 5|5 VERSE:/g.test(line)) {
+            } else if (/5 verse:|Verse 5|Verse: 5|VERSE: 5|VERSE 5|5 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">5 verse:</span>`);
-            } else if (/6 verse:|Verse 6|Verse: 6|VERSE: 6|6 VERSE:/g.test(line)) {
+            } else if (/6 verse:|Verse 6|Verse: 6|VERSE: 6|VERSE 6|6 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">6 verse:</span>`);
-            } else if (/7 verse:|Verse 7|Verse: 7|VERSE: 7|7 VERSE:/g.test(line)) {
+            } else if (/7 verse:|Verse 7|Verse: 7|VERSE: 7|VERSE 7|7 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">7 verse:</span>`);
             } else if (/Verse:|VERSE:|Verse/g.test(line)) {
                 return result.push(`<span class="verse">Verse:</span>`);
@@ -210,7 +210,7 @@ export class PrettifyService {
                 return result.push(`<span class="bridge">Instrumental:</span>`);
             } else if (/INTERLUDE:|Interlude:/g.test(line)) {
                 return result.push(`<span class="bridge">Interlude:</span>`);
-            } else if (/Куплет:|куплет:/g.test(line)) {
+            } else if (/Куплет:|куплет:|КУПЛЕТ:/g.test(line)) {
                 return result.push(`<span class="verse">Куплет:</span>`);
             } else if (/Бридж:|Мост:|БРИДЖ:|Бридж|Мостик:|МОСТИК:/g.test(line)) {
                 return result.push(`<span class="bridge">Мост:</span>`);
@@ -220,6 +220,8 @@ export class PrettifyService {
                 return result.push(`<span class="bridge">Bridge:</span>`);
             } else if (/TAG:|Tag:/g.test(line)) {
                 return result.push(`<span class="bridge">Tag:</span>`);
+            } else if (/Реп:|РЕП:/g.test(line)) {
+                return result.push(`<span class="bridge">Реп:</span>`);
             } else {
                 return result.push(line);
             }
