@@ -192,7 +192,7 @@ export class PrettifyService {
                 return result.push(`<span class="verse">1 verse:</span>`);
             } else if (/2 verse:|Verse 2|Verse: 2|VERSE: 2|VERSE 2|2 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">2 verse:</span>`);
-            } else if (/3 verse:|Verse 3|Verse: 3|VERSE: 3|3 VERSE:/g.test(line)) {
+            } else if (/3 verse:|Verse 3|Verse: 3|VERSE: 3|VERSE 3|3 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">3 verse:</span>`);
             } else if (/4 verse:|Verse 4|Verse: 4|VERSE: 4|VERSE 4|4 VERSE:/g.test(line)) {
                 return result.push(`<span class="verse">4 verse:</span>`);
