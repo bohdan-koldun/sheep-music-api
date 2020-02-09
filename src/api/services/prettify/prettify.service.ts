@@ -206,6 +206,10 @@ export class PrettifyService {
                 return result.push(`<span class="verse">Verse:</span>`);
             } else if (/Концовка:|концовка:/g.test(line)) {
                 return result.push(`<span class="verse">Концовка:</span>`);
+            } else if (/Вірш:|ВІРШ:/g.test(line)) {
+                return result.push(`<span class="verse">Вірш:</span>`);
+            } else if (/Заспів:|ЗАСПІВ:/g.test(line)) {
+                return result.push(`<span class="verse">Заспів:</span>`);
             } else if (/INSTRUMENTAL:|Instrumental:/g.test(line)) {
                 return result.push(`<span class="bridge">Instrumental:</span>`);
             } else if (/INTERLUDE:|Interlude:/g.test(line)) {
