@@ -1,8 +1,11 @@
 import {
     Controller, Inject, Get, Request, CacheKey,
-    CacheTTL, UseInterceptors, CacheInterceptor,
+    CacheTTL, UseInterceptors, CacheInterceptor, UseGuards,
 } from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {Roles, GetUser} from '../../common/decorators';
 import { StatisticService } from '../services';
+import { User } from '../../user/entities/user.entity';
 
 @Controller('statistic')
 @UseInterceptors(CacheInterceptor)
@@ -18,6 +21,13 @@ export class StatisticController {
             request.query.hasOwnProperty('count') && request.query.count || 10,
             request.query.hasOwnProperty('filter') && request.query.filter || 'popular',
         );
+    }
+
+    @Get('moderator')
+    @Roles('admin', 'moderator')
+    @UseGuards(AuthGuard('jwt'))
+    moderatorStatistic( @GetUser() authUser: User) {
+        return this.statisticService.getModeratorStatistic(authUser);
     }
 
 }

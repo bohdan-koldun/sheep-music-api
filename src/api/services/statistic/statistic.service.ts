@@ -1,9 +1,10 @@
-import {Injectable, Inject} from '@nestjs/common';
-import {Connection, Repository} from 'typeorm';
-import {Song} from '../../entities/song.entity';
-import {Album} from '../../entities/album.entity';
-import {Author} from '../../entities/author.entity';
-import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
+import { Injectable, Inject } from '@nestjs/common';
+import { Connection, Repository } from 'typeorm';
+import { Song } from '../../entities/song.entity';
+import { Album } from '../../entities/album.entity';
+import { Author } from '../../entities/author.entity';
+import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
+import { User } from '../../../user/entities/user.entity';
 
 @Injectable()
 export class StatisticService {
@@ -29,7 +30,7 @@ export class StatisticService {
             .leftJoinAndSelect('song.album', 'album')
             .leftJoinAndSelect('song.tags', 'tags')
             .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
-            .orderBy({...generateOrderFilter(filter, 'song')})
+            .orderBy({ ...generateOrderFilter(filter, 'song') })
             .take(count)
             .getMany();
 
@@ -40,7 +41,7 @@ export class StatisticService {
             .loadRelationCountAndMap('album.songs', 'album.songs')
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .take(count)
-            .orderBy({...generateOrderFilter(filter, 'album')})
+            .orderBy({ ...generateOrderFilter(filter, 'album') })
             .getMany();
 
         const authors = await this.authorRepo
@@ -51,7 +52,7 @@ export class StatisticService {
             .loadRelationCountAndMap('author.albums', 'author.albums')
             .leftJoinAndSelect('author.thumbnail', 'thumbnail')
             .take(count)
-            .orderBy({...generateOrderFilter(filter, 'author')})
+            .orderBy({ ...generateOrderFilter(filter, 'author') })
             .getMany();
 
         return {
@@ -59,6 +60,36 @@ export class StatisticService {
             albums,
             authors,
         };
+    }
+
+    async getModeratorStatistic(user: User): Promise<object> {
+        const added = entity => this.conection.manager.query(
+            `select u.id, u.name, count(*), sum(e."viewCount") as sumView, sum(e."likeCount") as sumLike ` +
+            `from users as u ` +
+            `inner join ${entity} as e on u.id=e."ownerId" group by u.id`,
+        );
+
+        const edited = entity => this.conection.manager.query(
+            `select u.id, u.name, count(*), sum(e."viewCount") as sumView, sum(e."likeCount") from users` +
+            ` as u left join users_${entity}_${entity} as ue on u.id = ue."usersId"` +
+            ` inner join ${entity} as e on ue."${entity}Id" = e.id group by u.id`,
+        );
+
+        const statisticPromises = {
+            songs: added('songs'),
+            albums: added('albums'),
+            authors: added('authors'),
+            editedSongs: edited('songs'),
+            editedAlbums: edited('albums'),
+            editedAuthors: edited('authors'),
+        };
+
+        const result = await Promise.all(Object.values(statisticPromises));
+
+        return Object.keys(statisticPromises).reduce((obj, key, i) => ({
+            ...obj,
+            [key]: result[i],
+        }), {});
     }
 
 }
