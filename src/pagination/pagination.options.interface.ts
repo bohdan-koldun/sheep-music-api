@@ -4,4 +4,5 @@ export interface PaginationOptionsInterface {
     keyword: string;
     filter: string;
     tags?: string;
+    chords?: string;
 }

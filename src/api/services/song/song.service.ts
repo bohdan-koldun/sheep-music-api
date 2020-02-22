@@ -36,7 +36,8 @@ export class SongService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
-        const {keyword, limit, page, filter, tags} = options;
+        const {keyword, limit, page, filter, tags, chords} = options;
+
         const query = this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
@@ -49,6 +50,10 @@ export class SongService {
 
         if (tags && tags !== 'null') {
             query.andWhere('tags.id IN (:...tagIds)', {tagIds: tags.split(',')});
+        }
+
+        if (chords === 'true') {
+            query.andWhere('song.chords is not null');
         }
 
         const [results, total] = await query

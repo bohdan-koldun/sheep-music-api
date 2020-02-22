@@ -47,6 +47,7 @@ export class SongController {
             keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
             filter: request.query.hasOwnProperty('filter') ? request.query.filter : '',
             tags: request.query.hasOwnProperty('tags') ? request.query.tags : '',
+            chords: request.query.hasOwnProperty('chords') ? request.query.chords : '',
         });
     }
 
