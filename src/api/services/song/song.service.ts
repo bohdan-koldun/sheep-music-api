@@ -37,7 +37,7 @@ export class SongService {
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
         const { keyword, limit, page, filter, tags } = options;
-        const { chords, minus } = options;
+        const { chords, minus, languages } = options;
 
         const query = this.songRepo
             .createQueryBuilder('song')
@@ -60,6 +60,10 @@ export class SongService {
 
         if (minus === 'true') {
             query.andWhere('song.phonogramMp3 is not null');
+        }
+
+        if (languages && languages !== 'null') {
+            query.andWhere('song.language IN (:...languages)', { languages: languages.split(',') });
         }
 
         const [results, total] = await query

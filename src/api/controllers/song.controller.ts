@@ -51,6 +51,7 @@ export class SongController {
             tags: query.hasOwnProperty('tags') ? query.tags : '',
             chords: query.hasOwnProperty('chords') ? query.chords : '',
             minus: query.hasOwnProperty('minus') ? query.minus : '',
+            languages: query.hasOwnProperty('languages') ? query.languages : '',
         });
     }
 
