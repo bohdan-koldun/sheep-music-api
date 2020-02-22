@@ -1,11 +1,11 @@
-import {Injectable, Inject, Logger} from '@nestjs/common';
-import {Connection, Repository} from 'typeorm';
-import {slugify} from 'transliteration';
-import {Song} from '../../entities/song.entity';
-import {SongDTO} from '../../dto';
-import {PaginationOptionsInterface, Pagination} from '../../../pagination';
-import {PrettifyService} from '../prettify/prettify.service';
-import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Connection, Repository } from 'typeorm';
+import { slugify } from 'transliteration';
+import { Song } from '../../entities/song.entity';
+import { SongDTO } from '../../dto';
+import { PaginationOptionsInterface, Pagination } from '../../../pagination';
+import { PrettifyService } from '../prettify/prettify.service';
+import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class SongService {
@@ -25,8 +25,8 @@ export class SongService {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
         const song = await this.songRepo.findOne({
             where: [
-                {id: id ? id : null},
-                {slug: identificator},
+                { id: id ? id : null },
+                { slug: identificator },
             ],
             relations: ['tags'],
         });
@@ -36,28 +36,34 @@ export class SongService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<SongDTO>> {
-        const {keyword, limit, page, filter, tags, chords} = options;
+        const { keyword, limit, page, filter, tags } = options;
+        const { chords, minus } = options;
 
         const query = this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndSelect('song.audioMp3', 'audioMp3')
+            .leftJoin('song.phonogramMp3', 'phonogramMp3')
             .leftJoinAndSelect('song.author', 'author')
             .leftJoinAndSelect('author.thumbnail', 'authorThumbnail')
             .leftJoinAndSelect('song.album', 'album')
             .leftJoinAndSelect('song.tags', 'tags')
             .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
-            .where('LOWER(song.title) LIKE :search', {search: `%${keyword.toLowerCase()}%`});
+            .where('LOWER(song.title) LIKE :search', { search: `%${keyword.toLowerCase()}%` });
 
         if (tags && tags !== 'null') {
-            query.andWhere('tags.id IN (:...tagIds)', {tagIds: tags.split(',')});
+            query.andWhere('tags.id IN (:...tagIds)', { tagIds: tags.split(',') });
         }
 
         if (chords === 'true') {
             query.andWhere('song.chords is not null');
         }
 
+        if (minus === 'true') {
+            query.andWhere('song.phonogramMp3 is not null');
+        }
+
         const [results, total] = await query
-            .orderBy({...generateOrderFilter(filter, 'song')})
+            .orderBy({ ...generateOrderFilter(filter, 'song') })
             .take(limit)
             .skip(limit * page)
             .getManyAndCount();
@@ -72,11 +78,11 @@ export class SongService {
 
     async incrementView(id: number) {
         await this.songRepo
-            .increment({id}, 'viewCount', 1);
+            .increment({ id }, 'viewCount', 1);
     }
 
     async incrementLike(id: number) {
         await this.songRepo
-            .increment({id}, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
     }
 }

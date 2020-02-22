@@ -41,13 +41,16 @@ export class SongController {
 
     @Get()
     async index(@Request() request): Promise<Pagination<SongDTO>> {
+        const query = request.query;
+
         return await this.songService.paginate({
-            limit: request.query.hasOwnProperty('limit') ? request.query.limit : 20,
-            page: request.query.hasOwnProperty('page') ? request.query.page : 0,
-            keyword: request.query.hasOwnProperty('keyword') ? request.query.keyword : '',
-            filter: request.query.hasOwnProperty('filter') ? request.query.filter : '',
-            tags: request.query.hasOwnProperty('tags') ? request.query.tags : '',
-            chords: request.query.hasOwnProperty('chords') ? request.query.chords : '',
+            limit: query.hasOwnProperty('limit') ? query.limit : 20,
+            page: query.hasOwnProperty('page') ? query.page : 0,
+            keyword: query.hasOwnProperty('keyword') ? query.keyword : '',
+            filter: query.hasOwnProperty('filter') ? query.filter : '',
+            tags: query.hasOwnProperty('tags') ? query.tags : '',
+            chords: query.hasOwnProperty('chords') ? query.chords : '',
+            minus: query.hasOwnProperty('minus') ? query.minus : '',
         });
     }
 
