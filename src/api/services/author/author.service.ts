@@ -4,6 +4,7 @@ import { slugify } from 'transliteration';
 import { AuthorDTO } from '../../dto';
 import { PaginationOptionsInterface, Pagination } from '../../../pagination';
 import { Author } from '../../entities/author.entity';
+import { AuthorViewLog } from '../../entities/author.view.log.entity';
 import { AttachmentService } from '../attachment/attachment.service';
 import { User } from '../../../user/entities';
 import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
@@ -14,6 +15,7 @@ export class AuthorService {
     private readonly userRepo: Repository<User>;
     @Inject()
     private readonly attachmentService: AttachmentService;
+    private readonly authorViewLogRepo: Repository<AuthorViewLog>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
@@ -21,6 +23,7 @@ export class AuthorService {
     ) {
         this.authorRepo = this.conection.getRepository(Author);
         this.userRepo = this.conection.getRepository(User);
+        this.authorViewLogRepo = this.conection.getRepository(AuthorViewLog);
     }
 
     async getBySlugOrId(identificator: string): Promise<AuthorDTO> {
@@ -132,8 +135,18 @@ export class AuthorService {
     }
 
     async incrementView(id: number) {
-        await this.authorRepo
-            .increment({ id }, 'viewCount', 1);
+        const author = { id };
+
+        await this.authorRepo.increment(author, 'viewCount', 1);
+
+        const date = new Date(new Date(Date.now()).toLocaleString().split(',')[0]);
+
+        const { id: authorId } = (
+            await this.authorViewLogRepo.findOne({ date, author }) ||
+            await this.authorViewLogRepo.save({ date, author })
+        );
+
+        await this.authorViewLogRepo.increment({ id: authorId }, 'count', 1);
     }
 
     async incrementLike(id: number) {
