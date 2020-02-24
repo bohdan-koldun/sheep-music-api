@@ -2,6 +2,7 @@ import {Injectable, Inject, HttpException, HttpStatus} from '@nestjs/common';
 import {Connection, Repository} from 'typeorm';
 import {slugify} from 'transliteration';
 import {Album} from '../../entities/album.entity';
+import { AlbumViewLog } from '../../entities/album.view.log.entity';
 import {Author} from '../../entities/author.entity';
 import {AlbumDTO} from '../../dto';
 import {PaginationOptionsInterface, Pagination} from '../../../pagination';
@@ -14,6 +15,8 @@ export class AlbumService {
     private readonly albumRepo: Repository<Album>;
     private readonly authorRepo: Repository<Author>;
     private readonly userRepo: Repository<User>;
+    private readonly albumViewLogRepo: Repository<AlbumViewLog>;
+
     @Inject()
     private readonly attachmentService: AttachmentService;
 
@@ -24,6 +27,7 @@ export class AlbumService {
         this.albumRepo = this.conection.getRepository(Album);
         this.authorRepo = this.conection.getRepository(Author);
         this.userRepo = this.conection.getRepository(User);
+        this.albumViewLogRepo = this.conection.getRepository(AlbumViewLog);
     }
 
     async getBySlugOrId(identificator: string): Promise<Album> {
@@ -149,8 +153,19 @@ export class AlbumService {
     }
 
     async incrementView(id: number) {
-        await this.albumRepo
-            .increment({id}, 'viewCount', 1);
+        const album = { id };
+
+        await this.albumRepo.increment(album, 'viewCount', 1);
+
+        const date = new Date(new Date(Date.now()).toLocaleString().split(',')[0]);
+
+        let songViewLog = await this.albumViewLogRepo.findOne({ date, album });
+
+        if (!songViewLog) {
+                songViewLog = await this.albumViewLogRepo.save({ date, album });
+            }
+
+        await this.albumViewLogRepo.increment({ id: songViewLog.id }, 'count', 1);
     }
 
     async incrementLike(id: number) {

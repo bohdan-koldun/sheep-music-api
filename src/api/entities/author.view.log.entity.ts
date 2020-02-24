@@ -8,7 +8,7 @@ export class AuthorViewLog {
     id: number;
 
     @Column({ type: 'date', nullable: false })
-    date: string;
+    date: Date;
 
     @Column({ type: 'int', default: 0 })
     count: number;
