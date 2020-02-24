@@ -1,8 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm';
 import { Album } from './album.entity';
 
-@Entity('album_view_log')
-export class AlbumViewLog {
+@Entity('author_view_log')
+export class AuthorViewLog {
     @Index()
     @PrimaryGeneratedColumn()
     id: number;
