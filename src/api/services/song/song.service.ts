@@ -1,24 +1,22 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
-import { slugify } from 'transliteration';
 import { Song } from '../../entities/song.entity';
+import { SongViewLog } from '../../entities/song.view.log.entity';
 import { SongDTO } from '../../dto';
 import { PaginationOptionsInterface, Pagination } from '../../../pagination';
-import { PrettifyService } from '../prettify/prettify.service';
 import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class SongService {
     private readonly songRepo: Repository<Song>;
-
-    @Inject()
-    private readonly prettifyService: PrettifyService;
+    private readonly songViewLogRepo: Repository<SongViewLog>;
 
     constructor(
         @Inject('DATABASE_CONNECTION')
-        private readonly conection: Connection,
+        private readonly connection: Connection,
     ) {
-        this.songRepo = this.conection.getRepository(Song);
+        this.songRepo = this.connection.getRepository(Song);
+        this.songViewLogRepo = this.connection.getRepository(SongViewLog);
     }
 
     async getBySlugOrId(identificator: string): Promise<SongDTO> {
@@ -81,8 +79,23 @@ export class SongService {
     }
 
     async incrementView(id: number) {
+        const song = { id };
+
         await this.songRepo
-            .increment({ id }, 'viewCount', 1);
+            .increment(song, 'viewCount', 1);
+
+        const date = new Date(
+            new Date(Date.now()).toLocaleString().split(',')[0],
+        );
+
+        let songViewLog = await this.songViewLogRepo.findOne({ date, song });
+
+        if (!songViewLog) {
+            songViewLog = await this.songViewLogRepo.save({ date, song });
+        }
+
+        await this.songViewLogRepo
+            .increment({ id: songViewLog.id }, 'count', 1);
     }
 
     async incrementLike(id: number) {
