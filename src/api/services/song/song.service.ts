@@ -81,21 +81,16 @@ export class SongService {
     async incrementView(id: number) {
         const song = { id };
 
-        await this.songRepo
-            .increment(song, 'viewCount', 1);
+        await this.songRepo.increment(song, 'viewCount', 1);
 
-        const date = new Date(
-            new Date(Date.now()).toLocaleString().split(',')[0],
+        const date = new Date(new Date(Date.now()).toLocaleString().split(',')[0]);
+
+        const songViewLog = (
+            await this.songViewLogRepo.findOne({ date, song }) ||
+            await this.songViewLogRepo.save({ date, song })
         );
 
-        let songViewLog = await this.songViewLogRepo.findOne({ date, song });
-
-        if (!songViewLog) {
-            songViewLog = await this.songViewLogRepo.save({ date, song });
-        }
-
-        await this.songViewLogRepo
-            .increment({ id: songViewLog.id }, 'count', 1);
+        await this.songViewLogRepo.increment({ id: songViewLog.id }, 'count', 1);
     }
 
     async incrementLike(id: number) {
