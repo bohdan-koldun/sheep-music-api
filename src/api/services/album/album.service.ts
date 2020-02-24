@@ -1,14 +1,14 @@
-import {Injectable, Inject, HttpException, HttpStatus} from '@nestjs/common';
-import {Connection, Repository} from 'typeorm';
-import {slugify} from 'transliteration';
-import {Album} from '../../entities/album.entity';
+import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import { Connection, Repository } from 'typeorm';
+import { slugify } from 'transliteration';
+import { Album } from '../../entities/album.entity';
 import { AlbumViewLog } from '../../entities/album.view.log.entity';
-import {Author} from '../../entities/author.entity';
-import {AlbumDTO} from '../../dto';
-import {PaginationOptionsInterface, Pagination} from '../../../pagination';
-import {AttachmentService} from '../attachment/attachment.service';
-import {User} from '../../../user/entities';
-import {generateOrderFilter} from '../../../common/filters/typeorm.order.filter';
+import { Author } from '../../entities/author.entity';
+import { AlbumDTO } from '../../dto';
+import { PaginationOptionsInterface, Pagination } from '../../../pagination';
+import { AttachmentService } from '../attachment/attachment.service';
+import { User } from '../../../user/entities';
+import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 
 @Injectable()
 export class AlbumService {
@@ -35,24 +35,24 @@ export class AlbumService {
 
         return await this.albumRepo.findOne({
             where: [
-                {id: id ? id : null},
-                {slug: identificator},
+                { id: id ? id : null },
+                { slug: identificator },
             ],
             relations: ['songs', 'author'],
         });
     }
 
     async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<Album> {
-        const oldData = await this.albumRepo.findOne({where: {id: album.id}, relations: ['songs']});
+        const oldData = await this.albumRepo.findOne({ where: { id: album.id }, relations: ['songs'] });
 
         if (!oldData) {
             throw new HttpException('Ошибка редактирования альбома!', HttpStatus.BAD_REQUEST);
         }
 
-        const {author} = album as any;
+        const { author } = album as any;
 
         if (author && Number.isInteger(Number(author))) {
-            if (oldData.songs?.length && oldData.author?.id !== Number(author)) {
+            if (oldData.songs ?.length && oldData.author ?.id !== Number(author)) {
                 throw new HttpException(
                     `Нельзя изменить исполнителя, альбом уже имеет песни: ${oldData.songs.map(item => item.title).join(', ')}`,
                     HttpStatus.BAD_REQUEST,
@@ -75,7 +75,7 @@ export class AlbumService {
 
         delete album.slug;
 
-        await this.albumRepo.update({id: album.id}, {
+        await this.albumRepo.update({ id: album.id }, {
             ...album,
         });
 
@@ -96,13 +96,13 @@ export class AlbumService {
                 );
         }
 
-        if (!await this.authorRepo.findOne({id: Number(album.author) || null})) {
+        if (!await this.authorRepo.findOne({ id: Number(album.author) || null })) {
             delete album.author;
         }
 
         let newAlbum;
         try {
-            newAlbum = await this.albumRepo.save({...album, owner: user, slug});
+            newAlbum = await this.albumRepo.save({ ...album, owner: user, slug });
         } catch (error) {
             newAlbum = await this.albumRepo.save({
                 ...album,
@@ -119,7 +119,7 @@ export class AlbumService {
     async paginate(
         options: PaginationOptionsInterface,
     ): Promise<Pagination<AlbumDTO>> {
-        const {keyword, limit, page, filter} = options;
+        const { keyword, limit, page, filter } = options;
 
         const [results, total] = await this.albumRepo
             .createQueryBuilder('album')
@@ -129,8 +129,8 @@ export class AlbumService {
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .skip(page * limit)
             .take(limit)
-            .where('LOWER(album.title) like :title', {title: '%' + keyword.toLowerCase() + '%'})
-            .orderBy({...generateOrderFilter(filter, 'album')})
+            .where('LOWER(album.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
+            .orderBy({ ...generateOrderFilter(filter, 'album') })
             .getManyAndCount();
 
         return new Pagination<any>({
@@ -146,7 +146,7 @@ export class AlbumService {
 
         if (!isNaN(parseInt(authorId, 10))) {
             query.leftJoinAndSelect('album.author', 'author')
-                .where('author.id=:authorId', {authorId});
+                .where('author.id=:authorId', { authorId });
         }
 
         return await query.select(['album.id', 'album.title']).getMany();
@@ -159,18 +159,17 @@ export class AlbumService {
 
         const date = new Date(new Date(Date.now()).toLocaleString().split(',')[0]);
 
-        let songViewLog = await this.albumViewLogRepo.findOne({ date, album });
+        const { id: albumId } = (
+            await this.albumViewLogRepo.findOne({ date, album }) ||
+            await this.albumViewLogRepo.save({ date, album })
+        );
 
-        if (!songViewLog) {
-                songViewLog = await this.albumViewLogRepo.save({ date, album });
-            }
-
-        await this.albumViewLogRepo.increment({ id: songViewLog.id }, 'count', 1);
+        await this.albumViewLogRepo.increment({ id: albumId }, 'count', 1);
     }
 
     async incrementLike(id: number) {
         await this.albumRepo
-            .increment({id}, 'likeCount', 1);
+            .increment({ id }, 'likeCount', 1);
     }
 
     private async saveAlbumUserRelation(user: User, album: Album) {
@@ -183,14 +182,14 @@ export class AlbumService {
             .createQueryBuilder('album')
             .select('album.id')
             .leftJoin('album.users', 'user')
-            .where('user.id = :id', {id: user.id})
+            .where('user.id = :id', { id: user.id })
             .getMany();
 
         const ids = new Set((userAlbums || []).map(item => item.id));
 
         ids.add(Number(album.id));
 
-        user.albums = [...ids].map(id => ({id} as Album));
+        user.albums = [...ids].map(id => ({ id } as Album));
 
         await this.userRepo.save(user);
     }
