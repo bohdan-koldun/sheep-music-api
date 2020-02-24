@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm';
-import { Album } from './album.entity';
+import { Author } from './author.entity';
 
 @Entity('author_view_log')
 export class AuthorViewLog {
@@ -13,6 +13,6 @@ export class AuthorViewLog {
     @Column({ type: 'int', default: 0 })
     count: number;
 
-    @ManyToOne(type => Album)
-    album: Album;
+    @ManyToOne(type => Author)
+    author: Author;
 }
