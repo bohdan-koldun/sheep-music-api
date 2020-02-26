@@ -7,6 +7,7 @@ import { FileAwsUploaderModule } from '../src/file-aws-uploader/file.aws.uploade
 import { UserModule } from '../src/user/user.module';
 import { MailModule } from '../src/mail/mail.module';
 import { AuthModule } from '../src/auth/auth.module';
+import {  ChordsScriptsService } from './chords/service';
 
 @Global()
 
@@ -22,9 +23,7 @@ import { AuthModule } from '../src/auth/auth.module';
     controllers: [],
     providers: [
         ...apiProviders,
-    ],
-    exports: [
-        ...apiProviders,
+        ChordsScriptsService,
     ],
 })
 
