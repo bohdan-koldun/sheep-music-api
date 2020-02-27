@@ -11,7 +11,7 @@ async function bootstrap() {
 
   await chordsScripts.updateChodsKey();
 
-  await chordsScripts.deleteTextWithoutChords();
+  // await chordsScripts.replaceChordH();
 
 }
 bootstrap();

@@ -12,3 +12,32 @@ export function haveTextChordsLine(text) {
 
     return text.split(/\r\n|\n/g).some(line => isChordLine(line));
 }
+
+export function haveChordH(text) {
+    if (!text) { return false; }
+
+    return text.split(/\r\n|\n/g).some(line => {
+        const chordsLine = isChordLine(line);
+
+        if (chordsLine && /H/g.test(line)) {
+            return true;
+        }
+        return false;
+    });
+
+}
+
+export function replaceChordH(text) {
+    const result = [];
+
+    text.split(/\r\n|\n/g).forEach(line => {
+        if (isChordLine(line) && /H/g.test(line)) {
+            line = line.replace(/H/g, 'B');
+        }
+
+        result.push(line);
+    });
+
+    return result.join('\n');
+
+}
