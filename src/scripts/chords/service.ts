@@ -1,6 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
-import { Song } from '../../src/api/entities/song.entity';
+import { Song } from '../../api/entities/song.entity';
 import { haveTextChordsLine, haveChordH, replaceChordH } from '../utils/chords';
 
 @Injectable()

@@ -1,12 +1,12 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from 'nestjs-config';
 import * as path from 'path';
-import { apiProviders } from '../src/api/api.providers';
-import { DatabaseModule } from '../src/database/database.module';
-import { FileAwsUploaderModule } from '../src/file-aws-uploader/file.aws.uploader.module';
-import { UserModule } from '../src/user/user.module';
-import { MailModule } from '../src/mail/mail.module';
-import { AuthModule } from '../src/auth/auth.module';
+import { apiProviders } from '../api/api.providers';
+import { DatabaseModule } from '../database/database.module';
+import { FileAwsUploaderModule } from '../file-aws-uploader/file.aws.uploader.module';
+import { UserModule } from '../user/user.module';
+import { MailModule } from '../mail/mail.module';
+import { AuthModule } from '../auth/auth.module';
 import {  ChordsScriptsService } from './chords/service';
 
 @Global()
