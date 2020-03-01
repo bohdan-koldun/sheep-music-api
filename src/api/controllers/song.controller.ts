@@ -120,7 +120,7 @@ export class SongController {
         ],
         {
             limits: {
-                fileSize: 14 * 1024 * 1024,
+                fileSize: 20 * 1024 * 1024,
             },
             fileFilter: audioMulterFilter,
         },
