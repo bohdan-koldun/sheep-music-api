@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Song } from './song.entity';
 
 @Entity('song_view_log')
@@ -15,4 +15,8 @@ export class SongViewLog {
 
     @ManyToOne(type => Song)
     song: Song;
+
+    @Index()
+    @CreateDateColumn({ name: 'created_at', nullable: false })
+    createdAt: Date;
 }

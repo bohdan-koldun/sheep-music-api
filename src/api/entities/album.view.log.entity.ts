@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Index, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Album } from './album.entity';
 
 @Entity('album_view_log')
@@ -15,4 +15,8 @@ export class AlbumViewLog {
 
     @ManyToOne(type => Album)
     album: Album;
+
+    @Index()
+    @CreateDateColumn({ name: 'created_at', nullable: false })
+    createdAt: Date;
 }

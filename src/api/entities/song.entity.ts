@@ -1,7 +1,7 @@
 import {
     Column, Entity, PrimaryGeneratedColumn, JoinColumn,
     ManyToOne, JoinTable, ManyToMany,
-    CreateDateColumn, UpdateDateColumn, Index,
+    CreateDateColumn, UpdateDateColumn, Index, OneToMany,
 } from 'typeorm';
 import { SongDTO } from '../dto';
 import { Attachment } from './attachment.entity';
@@ -10,6 +10,7 @@ import { Author } from './author.entity';
 import { Tag } from './tag.entity';
 import { Translation } from './translation.entity';
 import { User } from '../../user/entities/user.entity';
+import { SongViewLog } from './song.view.log.entity';
 
 @Entity('songs')
 export class Song {
@@ -84,6 +85,9 @@ export class Song {
 
     @ManyToOne(type => User)
     owner: User;
+
+    @OneToMany(type => SongViewLog, roleUser => roleUser.song)
+    viewLogs: SongViewLog[];
 
     toResponseObject(): SongDTO {
         const {
