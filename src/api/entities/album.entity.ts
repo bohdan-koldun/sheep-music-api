@@ -7,6 +7,7 @@ import { Attachment } from './attachment.entity';
 import { Song } from './song.entity';
 import { Author } from './author.entity';
 import { User } from '../../user/entities';
+import { AlbumViewLog } from './album.view.log.entity';
 
 @Entity('albums')
 export class Album {
@@ -75,4 +76,7 @@ export class Album {
 
     @ManyToOne(type => User)
     owner: User;
+
+    @OneToMany(type => AlbumViewLog, viewLog => viewLog.album)
+    viewLogs: AlbumViewLog[];
 }
