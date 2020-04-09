@@ -48,7 +48,7 @@ export class StatisticService {
                 'authorThumbnail.id', 'authorThumbnail.path',
                 'audioMp3.id', 'audioMp3.path', 'audioMp3.duration',
             ])
-            .where('album.id IN (' + topSongs.getQuery() + ')')
+            .where('song.id IN (' + topSongs.getQuery() + ')')
             .getMany();
 
         const topAlbums = this.connection.getRepository(AlbumViewLog)
