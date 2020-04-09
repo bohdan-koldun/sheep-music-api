@@ -14,8 +14,8 @@ export class StatisticController {
     private readonly statisticService: StatisticService;
 
     @Get('top')
-    @CacheKey('statistic_top')
-    @CacheTTL(10800)
+    // @CacheKey('statistic_top')
+    // @CacheTTL(10800)
     topLists(@Request() request) {
         return this.statisticService.getTopLists(
             request.query.hasOwnProperty('count') && request.query.count || 10,

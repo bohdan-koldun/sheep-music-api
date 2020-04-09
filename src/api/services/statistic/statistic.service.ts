@@ -5,6 +5,7 @@ import { Album } from '../../entities/album.entity';
 import { Author } from '../../entities/author.entity';
 import { AuthorViewLog } from '../../entities/author.view.log.entity';
 import { AlbumViewLog } from '../../entities/album.view.log.entity';
+import { SongViewLog } from '../../entities/song.view.log.entity';
 import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 import { User } from '../../../user/entities/user.entity';
 
@@ -24,16 +25,30 @@ export class StatisticService {
     }
 
     async getTopLists(count: number, filter: string) {
+        const topSongs = this.connection.getRepository(SongViewLog)
+            .createQueryBuilder('viewlog')
+            .select('viewlog."songId"')
+            .where(`viewlog."created_at" > now() - interval '30 days'`)
+            .groupBy('viewlog."songId"')
+            .orderBy({ 'SUM(viewlog.count)': 'DESC' })
+            .take(count);
+
         const songs = this.songRepo
             .createQueryBuilder('song')
-            .leftJoinAndSelect('song.audioMp3', 'audioMp3')
-            .leftJoinAndSelect('song.author', 'author')
-            .leftJoinAndSelect('author.thumbnail', 'authorThumbnail')
-            .leftJoinAndSelect('song.album', 'album')
-            .leftJoinAndSelect('song.tags', 'tags')
-            .leftJoinAndSelect('album.thumbnail', 'albumThumbnail')
-            .orderBy({ ...generateOrderFilter(filter, 'song') })
-            .take(count)
+            .leftJoinAndMapOne('song.audioMp3', 'song.audioMp3', 'audioMp3')
+            .leftJoinAndMapOne('song.author', 'song.author', 'author')
+            .leftJoinAndMapOne('author.thumbnail', 'author.thumbnail', 'authorThumbnail')
+            .leftJoinAndMapOne('song.album', 'song.album', 'album')
+            .leftJoinAndMapOne('album.thumbnail', 'album.thumbnail', 'albumThumbnail')
+            .select([
+                'song.id', 'song.slug', 'song.title', 'song.viewCount',
+                'album.id', 'album.title',
+                'albumThumbnail.id', 'albumThumbnail.path',
+                'author.id', 'author.title',
+                'authorThumbnail.id', 'authorThumbnail.path',
+                'audioMp3.id', 'audioMp3.path', 'audioMp3.duration',
+            ])
+            .where('album.id IN (' + topSongs.getQuery() + ')')
             .getMany();
 
         const topAlbums = this.connection.getRepository(AlbumViewLog)
