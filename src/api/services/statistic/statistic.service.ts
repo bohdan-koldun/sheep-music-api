@@ -3,7 +3,7 @@ import { Connection, Repository } from 'typeorm';
 import { Song } from '../../entities/song.entity';
 import { Album } from '../../entities/album.entity';
 import { Author } from '../../entities/author.entity';
-import { SongViewLog } from '../../entities/song.view.log.entity';
+import { AuthorViewLog } from '../../entities/author.view.log.entity';
 import { AlbumViewLog } from '../../entities/album.view.log.entity';
 import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 import { User } from '../../../user/entities/user.entity';
@@ -51,22 +51,31 @@ export class StatisticService {
             .loadRelationCountAndMap('album.songs', 'album.songs')
             .select([
                 'album.id', 'album.slug', 'album.title', 'album.viewCount',
-                'album.year', 'album.createdAt', 'album.likeCount',
+                'album.year', 'album.createdAt',
                 'author.id', 'author.title',
                 'thumbnail.id', 'thumbnail.path',
             ])
             .where('album.id IN (' + topAlbums.getQuery() + ')')
             .getMany();
 
+        const topAuthors = this.connection.getRepository(AuthorViewLog)
+            .createQueryBuilder('viewlog')
+            .select('viewlog."authorId"')
+            .where(`viewlog."created_at" > now() - interval '30 days'`)
+            .groupBy('viewlog."authorId"')
+            .orderBy({ 'SUM(viewlog.count)': 'DESC' })
+            .take(count);
+
         const authors = this.authorRepo
             .createQueryBuilder('author')
-            .leftJoinAndSelect('author.songs', 'songs')
             .loadRelationCountAndMap('author.songs', 'author.songs')
-            .leftJoinAndSelect('author.albums', 'albums')
             .loadRelationCountAndMap('author.albums', 'author.albums')
-            .leftJoinAndSelect('author.thumbnail', 'thumbnail')
-            .take(count)
-            .orderBy({ ...generateOrderFilter(filter, 'author') })
+            .leftJoinAndMapOne('author.thumbnail', 'author.thumbnail', 'thumbnail')
+            .select([
+                'author.id', 'author.slug', 'author.title', 'author.viewCount',
+                'author.createdAt', 'thumbnail.id', 'thumbnail.path',
+            ])
+            .where('author.id IN (' + topAuthors.getQuery() + ')')
             .getMany();
 
         const results = await Promise.all([
