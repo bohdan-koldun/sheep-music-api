@@ -33,13 +33,24 @@ export class AlbumService {
     async getBySlugOrId(identificator: string): Promise<Album> {
         const id = !isNaN(Number(identificator)) ? parseInt(identificator, 10) : -1;
 
-        return await this.albumRepo.findOne({
-            where: [
-                { id: id ? id : null },
-                { slug: identificator },
-            ],
-            relations: ['songs', 'author'],
-        });
+        return this.albumRepo
+            .createQueryBuilder('album')
+            .leftJoinAndSelect('album.author', 'author')
+            .leftJoinAndSelect('album.songs', 'songs')
+            .leftJoinAndSelect('songs.audioMp3', 'audioMp3')
+            .leftJoinAndSelect('album.thumbnail', 'thumbnail')
+            .leftJoinAndSelect('author.thumbnail', 'authorThumbnail')
+            .where('album.slug=:slug or album.id=:id', { id, slug: identificator })
+            .select([
+                'album.id', 'album.slug', 'album.title', 'album.year',
+                'album.createdAt', 'album.viewCount', 'album.likeCount',
+                'author.id', 'author.title',
+                'thumbnail.id', 'thumbnail.path',
+                'authorThumbnail.id', 'authorThumbnail.path',
+                'songs.id', 'songs.slug', 'songs.title', 'songs.video',
+                'songs.audioMp3', 'audioMp3.id', 'audioMp3.path', 'audioMp3.duration',
+            ])
+            .getOne();
     }
 
     async editAlbum(album: AlbumDTO, avatar: Buffer, user: User): Promise<Album> {
