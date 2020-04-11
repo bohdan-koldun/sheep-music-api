@@ -124,12 +124,17 @@ export class AlbumService {
         const [results, total] = await this.albumRepo
             .createQueryBuilder('album')
             .leftJoinAndSelect('album.author', 'author')
-            .leftJoinAndSelect('album.songs', 'songs')
             .loadRelationCountAndMap('album.songs', 'album.songs')
             .leftJoinAndSelect('album.thumbnail', 'thumbnail')
             .skip(page * limit)
             .take(limit)
             .where('LOWER(album.title) like :title', { title: '%' + keyword.toLowerCase() + '%' })
+            .select([
+                'album.id', 'album.slug', 'album.title', 'album.year',
+                'album.createdAt', 'album.viewCount', 'album.likeCount',
+                'author.id', 'author.title',
+                'thumbnail.id', 'thumbnail.path',
+            ])
             .orderBy({ ...generateOrderFilter(filter, 'album') })
             .getManyAndCount();
 
