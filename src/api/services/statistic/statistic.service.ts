@@ -6,7 +6,6 @@ import { Author } from '../../entities/author.entity';
 import { AuthorViewLog } from '../../entities/author.view.log.entity';
 import { AlbumViewLog } from '../../entities/album.view.log.entity';
 import { SongViewLog } from '../../entities/song.view.log.entity';
-import { generateOrderFilter } from '../../../common/filters/typeorm.order.filter';
 import { User } from '../../../user/entities/user.entity';
 
 @Injectable()
@@ -24,16 +23,30 @@ export class StatisticService {
         this.authorRepo = this.connection.getRepository(Author);
     }
 
-    async getTopLists(count: number, filter: string) {
+    async getTopLists(count: number, days: number) {
+        const results = await Promise.all([
+            this.getTopSongs(count, days),
+            this.getTopAlbums(count, days),
+            this.getTopAuthors(count, days),
+        ]);
+
+        return {
+            songs: results[0],
+            albums: results[1],
+            authors: results[2],
+        };
+    }
+
+    async getTopSongs(count: number, days: number) {
         const topSongs = this.connection.getRepository(SongViewLog)
             .createQueryBuilder('viewlog')
             .select('viewlog."songId"')
-            .where(`viewlog."created_at" > now() - interval '30 days'`)
+            .where(`viewlog."created_at" > now() - interval '${days} days'`)
             .groupBy('viewlog."songId"')
             .orderBy({ 'SUM(viewlog.count)': 'DESC' })
             .take(count);
 
-        const songs = this.songRepo
+        return this.songRepo
             .createQueryBuilder('song')
             .leftJoinAndMapOne('song.audioMp3', 'song.audioMp3', 'audioMp3')
             .leftJoinAndMapOne('song.author', 'song.author', 'author')
@@ -50,16 +63,18 @@ export class StatisticService {
             ])
             .where('song.id IN (' + topSongs.getQuery() + ')')
             .getMany();
+    }
 
+    async getTopAlbums(count: number, days: number) {
         const topAlbums = this.connection.getRepository(AlbumViewLog)
             .createQueryBuilder('viewlog')
             .select('viewlog."albumId"')
-            .where(`viewlog."created_at" > now() - interval '30 days'`)
+            .where(`viewlog."created_at" > now() - interval '${days} days'`)
             .groupBy('viewlog."albumId"')
             .orderBy({ 'SUM(viewlog.count)': 'DESC' })
             .take(count);
 
-        const albums = this.albumRepo
+        return this.albumRepo
             .createQueryBuilder('album')
             .leftJoinAndMapOne('album.author', 'album.author', 'author')
             .leftJoinAndMapOne('album.thumbnail', 'album.thumbnail', 'thumbnail')
@@ -72,38 +87,28 @@ export class StatisticService {
             ])
             .where('album.id IN (' + topAlbums.getQuery() + ')')
             .getMany();
+    }
 
+    async getTopAuthors(count: number, days: number) {
         const topAuthors = this.connection.getRepository(AuthorViewLog)
-            .createQueryBuilder('viewlog')
-            .select('viewlog."authorId"')
-            .where(`viewlog."created_at" > now() - interval '30 days'`)
-            .groupBy('viewlog."authorId"')
-            .orderBy({ 'SUM(viewlog.count)': 'DESC' })
-            .take(count);
+        .createQueryBuilder('viewlog')
+        .select('viewlog."authorId"')
+        .where(`viewlog."created_at" > now() - interval '${days} days'`)
+        .groupBy('viewlog."authorId"')
+        .orderBy({ 'SUM(viewlog.count)': 'DESC' })
+        .take(count);
 
-        const authors = this.authorRepo
-            .createQueryBuilder('author')
-            .loadRelationCountAndMap('author.songs', 'author.songs')
-            .loadRelationCountAndMap('author.albums', 'author.albums')
-            .leftJoinAndMapOne('author.thumbnail', 'author.thumbnail', 'thumbnail')
-            .select([
-                'author.id', 'author.slug', 'author.title', 'author.viewCount',
-                'author.createdAt', 'thumbnail.id', 'thumbnail.path',
-            ])
-            .where('author.id IN (' + topAuthors.getQuery() + ')')
-            .getMany();
-
-        const results = await Promise.all([
-            songs,
-            albums,
-            authors,
-        ]);
-
-        return {
-            songs: results[0],
-            albums: results[1],
-            authors: results[2],
-        };
+        return this.authorRepo
+        .createQueryBuilder('author')
+        .loadRelationCountAndMap('author.songs', 'author.songs')
+        .loadRelationCountAndMap('author.albums', 'author.albums')
+        .leftJoinAndMapOne('author.thumbnail', 'author.thumbnail', 'thumbnail')
+        .select([
+            'author.id', 'author.slug', 'author.title', 'author.viewCount',
+            'author.createdAt', 'thumbnail.id', 'thumbnail.path',
+        ])
+        .where('author.id IN (' + topAuthors.getQuery() + ')')
+        .getMany();
     }
 
     async getModeratorStatistic(user: User): Promise<object> {
