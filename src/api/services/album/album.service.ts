@@ -43,7 +43,8 @@ export class AlbumService {
             .where('album.slug=:slug or album.id=:id', { id, slug: identificator })
             .select([
                 'album.id', 'album.slug', 'album.title', 'album.year',
-                'album.createdAt', 'album.viewCount', 'album.likeCount',
+                'album.createdAt', 'album.viewCount', 'album.likeCount', 'album.deezer',
+                'album.iTunes', 'album.googlePlay', 'album.soundCloud', 'album.youtubeMusic',
                 'author.id', 'author.title',
                 'thumbnail.id', 'thumbnail.path',
                 'authorThumbnail.id', 'authorThumbnail.path',
